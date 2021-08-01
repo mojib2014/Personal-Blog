@@ -1,0 +1,24 @@
+.content {
+  width: 90%;
+  max-width: 1290px;
+  margin: auto;
+}
+
+.disabled {
+  background-color: dodgerblue;
+}
+
+.form-content {
+  width: 50%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.MuiButton-containedPrimary {
+  margin: 15px auto !important;
+}
+
+.form-title {
+  text-align: center;
+  margin: 20px auto;
+}
