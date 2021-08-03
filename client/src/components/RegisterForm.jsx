@@ -10,6 +10,7 @@ import {
 import UserContext from "../context/userContext";
 import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
+import auth from "../services/authService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,8 +38,9 @@ const RegisterForm = () => {
     password: Yup.string().min(6).required().label("password"),
   });
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     register(values);
+    if (auth.getCurrentUser()) window.location = "/";
   };
 
   const [formik, handleClose, open] = UseForm(values, schema, handleSubmit);
@@ -104,7 +106,7 @@ const RegisterForm = () => {
         </form>
       </div>
       <SnackBar
-        err={error.data ? error.data : "Something failed"}
+        err={error}
         success={success}
         severity={error ? "error" : "success"}
         onClose={handleClose}

@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useContext } from "react";
 import * as Yup from "yup";
 import {
   TextField,
@@ -9,12 +9,9 @@ import {
 import { Redirect } from "react-router-dom";
 
 import SnackBar from "../common/SnackBar";
-import { authReducer, initialState } from "../store/reducers/authReducer";
-import auth from "../services/authService";
-import actionTypes from "../store/actions/action_types";
-import history from "../utils/history";
 import UseForm from "../hooks/useForm";
-import actions from "../store/actions/actions";
+import UserContext from "../context/userContext";
+import auth from "../services/authService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +21,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginForm = () => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+const LoginForm = (props) => {
+  const { loading, success, error, login } = useContext(UserContext);
   const classes = useStyles();
 
   const schema = Yup.object().shape({
@@ -40,20 +37,13 @@ const LoginForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      dispatch(actions.loading());
-
-      const res = await auth.login(values.email, values.password);
-
-      if (res.status !== 200) return dispatch(actions.error(res));
-      console.log("token", res);
+      await login(values.email, values.password);
       if (auth.getCurrentUser()) {
-        history.replace("/");
+        const { state } = props.location;
+        window.location = state ? state.from.pathname : "/";
       }
-      // const { state } = props.location;
-      // window.location = state ? state.from.pathname : "/";
-    } catch (err) {
-      console.log("catch: ", err);
-      dispatch({ type: actionTypes.ERROR, payload: err.response });
+    } catch (ex) {
+      console.log("login form handleSubmit: ", ex);
     }
   };
 
@@ -96,7 +86,7 @@ const LoginForm = () => {
             autoComplete="current-password"
           />
           <Button color="primary" variant="contained" fullWidth type="submit">
-            {state.loading ? (
+            {loading ? (
               <CircularProgress color="secondary" size={25} />
             ) : (
               "Login"
@@ -105,9 +95,9 @@ const LoginForm = () => {
         </form>
       </div>
       <SnackBar
-        err={state.error ? state.error.data : "Something failed"}
-        severity={state.error ? "error" : "success"}
-        success={state.success}
+        err={error}
+        severity={error ? "error" : "success"}
+        success={success}
         open={open}
         onClose={handleClose}
       />

@@ -9,7 +9,7 @@ async function login(email, password) {
 
     localStorage.setItem("token", jwt);
   } catch (err) {
-    return err.response;
+    throw err;
   }
 }
 

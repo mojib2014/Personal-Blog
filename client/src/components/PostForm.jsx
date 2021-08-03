@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useContext } from "react";
 import * as Yup from "yup";
 import MDEditor from "@uiw/react-md-editor";
 import { TextField, Button, makeStyles } from "@material-ui/core";
@@ -6,7 +6,7 @@ import { TextField, Button, makeStyles } from "@material-ui/core";
 import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
 import "../index.less";
-import { postReducer, initialState } from "../reducers/postReducer";
+import { PostContext } from "../context/postContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PostForm() {
-  const [{ loading, success }, addPost] = useReducer(postReducer, initialState);
+  const { loading, success, error, addPost } = useContext(PostContext);
   const [value, setValue] = useState("");
 
   const schema = Yup.object().shape({
@@ -27,9 +27,10 @@ export default function PostForm() {
 
   const handleSubmit = (values) => {
     addPost({ ...values, body: value });
+    if (success) window.location = "/";
   };
 
-  const values = { title: "" };
+  const values = { title: "", sub_title: "" };
 
   const [formik, handleClose, open] = UseForm(values, schema, handleSubmit);
 
@@ -63,15 +64,20 @@ export default function PostForm() {
             helperText={formik.touched.sub_title && formik.errors.sub_title}
           />
           <MDEditor value={value} onChange={setValue} />
-          <Button color="primary" variant="contained" type="submit">
-            {loading ? "Loading..." : "Submit"}
+          <Button
+            color="primary"
+            variant="contained"
+            type="submit"
+            disabled={loading}
+          >
+            Submit
           </Button>
         </form>
       </div>
       <SnackBar
         open={open}
-        err={formik.errors.title}
-        severity={formik.errors.title ? "error" : "success"}
+        err={error}
+        severity={error ? "error" : "success"}
         success={success}
         onClose={handleClose}
       />

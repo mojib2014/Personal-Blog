@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SnackBar = ({ err, open, severity, success, onClose }) => {
+const SnackBar = ({ err, open, severity, onClose }) => {
   const classes = useStyles();
 
   return (
@@ -27,11 +27,7 @@ const SnackBar = ({ err, open, severity, success, onClose }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
         <Alert onClose={onClose} severity={severity}>
-          {err
-            ? err.statusText || err
-            : success
-            ? "Successfuly Submited"
-            : "Something Failed!"}
+          {err ? err : "Successfuly Submited"}
         </Alert>
       </Snackbar>
     </div>
