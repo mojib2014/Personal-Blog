@@ -24,12 +24,23 @@ router.get("/post/:id", async (req, res, next) => {
   }
 });
 
+router.get("/author/posts/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const posts = await Post.getAuthorPosts(id);
+
+    res.send(posts);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/new", async (req, res, next) => {
   try {
     const data = req.body;
 
     const postInstance = new Post(data);
-    const post = postInstance.createPost();
+    const post = await postInstance.createPost();
 
     res.send(post);
   } catch (err) {
@@ -37,12 +48,11 @@ router.post("/new", async (req, res, next) => {
   }
 });
 
-router.put("/post/update/:id", async (req, res, next) => {
-  const { id } = req.params;
+router.put("/post/update", async (req, res, next) => {
   const data = req.body;
-
+  console.log("post update: ", data.id);
   try {
-    const post = await Post.getPostById(id);
+    const post = await Post.getPostById(data.id);
     if (!post)
       return res.status(404).send("Post with the given ID was not found!");
 
@@ -93,9 +103,9 @@ router.put("/post/like", async (req, res, next) => {
     if (!post)
       return res.status(404).send("Post with the given ID was not found!");
 
-    await Post.likePost(user_id, post.id);
+    const updatedPost = await Post.likePost(user_id, post.id);
 
-    res.send(post);
+    res.send(updatedPost);
   } catch (err) {
     next(err);
   }
@@ -109,9 +119,9 @@ router.put("/post/dislike", async (req, res, next) => {
     if (!post)
       return res.status(404).send("Post with the given ID was not found!");
 
-    await Post.disLikePost(user_id, post_id);
+    const updatedPost = await Post.disLikePost(user_id, post_id);
 
-    res.send(post);
+    res.send(updatedPost);
   } catch (err) {
     console.log("error: ", err);
     next(err);

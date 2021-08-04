@@ -9,24 +9,32 @@ import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
 import PostForm from "./components/PostForm";
 import PostDetails from "./pages/PostDetails/PostDetails";
+import Profile from "./pages/Profile/Profile";
+import Navbar from "./components/Navbar/Navbar";
 import "./App.css";
 
 const App = () => {
   return (
     <div className="main-app-wrapper" id="main-app-wrapper">
-      <CssBaseline />
-      <UserProvider>
-        <PostProvider>
-          <Switch>
-            <Route path="/login" component={LoginForm} />
-            <Route path="/register" component={RegisterForm} />
-            <Route path="/add-post" component={PostForm} />
-            <Route path="/posts/:title/:id" component={PostDetails} />
-            <Route exact path="/" component={Posts} />
-            <Redirect to="/" from="/posts" />
-          </Switch>
-        </PostProvider>
-      </UserProvider>
+      <CssBaseline>
+        <UserProvider>
+          <PostProvider>
+            <Navbar />
+            <Switch>
+              <Route exact path="/" component={Posts} />
+              <Route path="/login" component={LoginForm} />
+              <Route path="/register" component={RegisterForm} />
+              <Route path="/add-post" component={PostForm} />
+              <Route path="/posts/:title/:id" component={PostDetails} />
+              <Route
+                path="/author/profile/:last_name/:id"
+                component={Profile}
+              />
+              <Redirect to="/" from="/posts" />
+            </Switch>
+          </PostProvider>
+        </UserProvider>
+      </CssBaseline>
     </div>
   );
 };

@@ -11,6 +11,7 @@ const LOGIN = "LOGIN";
 const LOGOUT = "LOGOUT";
 const LIKE = "LIKE";
 const DISLIKE = "DISLIKE";
+const GET_AUTHOR_POSTS = "GET_AUTHOR_POSTS";
 
 const actionTypes = {
   LOADING,
@@ -26,6 +27,7 @@ const actionTypes = {
   LOGOUT,
   LIKE,
   DISLIKE,
+  GET_AUTHOR_POSTS,
 };
 
 export default actionTypes;

@@ -6,10 +6,7 @@ import auth from "../../services/authService";
 import actions from "../actions/actions";
 
 const UserProvider = ({ children }) => {
-  const [{ user, loading, success, error }, dispatch] = useReducer(
-    userReducer,
-    initialState,
-  );
+  const [state, dispatch] = useReducer(userReducer, initialState);
 
   const registerUser = async (user) => {
     dispatch(actions.loading);
@@ -34,17 +31,6 @@ const UserProvider = ({ children }) => {
     }
   };
 
-  const getUserById = async (user_id) => {
-    dispatch(actions.loading());
-    try {
-      const { data } = await userService.getUserById(user_id);
-
-      dispatch(actions.getById(data));
-    } catch (err) {
-      dispatch(actions.error(err.response.data || err.message));
-    }
-  };
-
   const login = async (email, password) => {
     dispatch(actions.loading());
     try {
@@ -57,13 +43,12 @@ const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        user,
-        loading,
-        success,
-        error,
-        register: registerUser,
+        user: state.user,
+        loading: state.loading,
+        success: state.success,
+        error: state.error,
+        registerUser,
         getUserByEmail,
-        getUserById,
         login,
       }}
     >

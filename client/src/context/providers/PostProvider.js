@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer } from "react";
 import { PostContext } from "../postContext";
 import { postReducer, initialState } from "../reducers/postReducer";
 import actions from "../actions/actions";
@@ -7,10 +7,6 @@ import auth from "../../services/authService";
 
 const PostProvider = ({ children }) => {
   const [state, dispatch] = useReducer(postReducer, initialState);
-
-  useEffect(() => {
-    getPosts();
-  }, []);
 
   const getPosts = async () => {
     dispatch(actions.loading());
@@ -46,7 +42,7 @@ const PostProvider = ({ children }) => {
             auth.getCurrentUser().id,
             post.id,
           );
-          dispatch(actions.like(data));
+          dispatch(actions.disLike(data));
         } catch (err) {
           dispatch(actions.error(err.response.data || err.message));
         }
@@ -57,7 +53,7 @@ const PostProvider = ({ children }) => {
             auth.getCurrentUser().id,
             post.id,
           );
-          dispatch(actions.disLike(data));
+          dispatch(actions.like(data));
         } catch (err) {
           dispatch(actions.error(err.response.data || err.message));
         }
@@ -69,17 +65,29 @@ const PostProvider = ({ children }) => {
     dispatch(actions.setSelected(post));
   };
 
+  const getAuthorPosts = async (author_id) => {
+    dispatch(actions.loading());
+    try {
+      const { data } = await postService.getAuthorPosts(author_id);
+      dispatch(actions.getAuthorPosts(data));
+    } catch (err) {
+      dispatch(actions.error(err.response.data || err.message));
+    }
+  };
+
   return (
     <PostContext.Provider
       value={{
         posts: state.posts,
-        selectedPost: state.selectedPost,
+        authorPosts: state.authorPosts,
         loading: state.loading,
         success: state.success,
         error: state.error,
+        getPosts,
         addPost,
         handleLike,
         setSelectedPost,
+        getAuthorPosts,
       }}
     >
       {children}

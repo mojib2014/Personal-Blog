@@ -18,14 +18,15 @@ const config = require("config");
 
   const postsTAble = `
       CREATE TABLE IF NOT EXISTS posts(
-        id        INT           PRIMARY  KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-        title     VARCHAR(100)  NOT NULL,
-        sub_title VARCHAR(150)  NOT NULL,
-        body      VARCHAR       NOT NULL,
-        created  TIMESTAMP      NOT NULL,
-        modified TIMESTAMP      NOT NULL,
+        id              INT             PRIMARY  KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+        title           VARCHAR(100)    NOT NULL,
+        sub_title       VARCHAR(150)    NOT NULL,
+        body            VARCHAR         NOT NULL,
+        created         TIMESTAMP       NOT NULL,
+        modified        TIMESTAMP       NOT NULL,
+        liked            BOOLEAN,
         like_user_id    INT[] DEFAULT ARRAY[]::INT[],
-        likes INT DEFAULT 0,
+        likes INT DEFAULT 0 CHECK (likes >= 0),
         author    INT   REFERENCES users(id)
       );
   `;

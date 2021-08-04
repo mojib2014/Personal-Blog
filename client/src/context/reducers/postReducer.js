@@ -2,7 +2,7 @@ import actionTypes from "../actions/actionTypes";
 
 export const initialState = {
   posts: [],
-  selectedPost: {},
+  authorPosts: [],
   loading: false,
   success: false,
   error: null,
@@ -36,15 +36,15 @@ export const postReducer = (state, action) => {
     case actionTypes.ADD:
       return {
         ...state,
-        posts: [...state.posts, ...action.payload],
+        posts: [Object.assign(state.posts, action.payload)],
         loading: false,
         success: true,
         error: null,
       };
-    case actionTypes.SET_SELECTED:
+    case actionTypes.GET_AUTHOR_POSTS:
       return {
         ...state,
-        selectedPost: action.payload,
+        authorPosts: action.payload,
         loading: false,
         success: true,
         error: false,
@@ -52,7 +52,7 @@ export const postReducer = (state, action) => {
     case actionTypes.LIKE:
       return {
         ...state,
-        selectedPost: action.payload,
+        posts: [Object.assign(state.posts, action.payload)],
         loading: false,
         success: true,
         error: null,
@@ -60,7 +60,7 @@ export const postReducer = (state, action) => {
     case actionTypes.DISLIKE:
       return {
         ...state,
-        selectedPost: action.payload,
+        posts: [Object.assign(state.posts, action.payload)],
         loading: false,
         success: true,
         error: null,

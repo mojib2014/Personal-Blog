@@ -7,7 +7,6 @@ import {
   CardActions,
   IconButton,
   Typography,
-  Link,
 } from "@material-ui/core";
 import ShareIcon from "@material-ui/icons/Share";
 import formatDate from "../../utils/formatDate";
@@ -16,12 +15,12 @@ import Cardheader from "../CardHeader/CardHeader";
 import formatSlug from "../../utils/formatSlug";
 import useStyles from "./styles";
 
-const PostCard = ({ item }) => {
+const PostCard = ({ item, author }) => {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
-      <Cardheader item={item} />
+      <Cardheader item={item} author={author} />
       <CardHeader title={item.title} subheader={formatDate(item.created)} />
       <CardMedia
         className={classes.media}
@@ -34,16 +33,23 @@ const PostCard = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing className={classes.cardActions}>
-        Likes: {item.likes}
+        <Typography variant="body2" color="textSecondary" component="p">
+          Likes: {item.likes}
+        </Typography>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
-        <Link href={`/posts/${formatSlug(item.title)}/${item.id}`}>
-          <Button size="small" color="primary">
-            Read
-          </Button>
-        </Link>
-        <p>{getReadingTime(item.body)}</p>
+        <Button
+          href={`/posts/${formatSlug(item.title)}/${item.id}`}
+          size="small"
+          color="primary"
+        >
+          Read
+        </Button>
+
+        <Typography variant="body2" color="textSecondary" component="p">
+          {getReadingTime(item.body)}
+        </Typography>
       </CardActions>
     </Card>
   );
@@ -53,4 +59,5 @@ export default PostCard;
 
 PostCard.propTypes = {
   item: PropTypes.object.isRequired,
+  author: PropTypes.object,
 };

@@ -1,7 +1,13 @@
-import React, { useContext, useEffect } from "react";
-import { CssBaseline, Typography, Grid, makeStyles } from "@material-ui/core";
+import React, { useEffect, useContext } from "react";
+import {
+  CssBaseline,
+  Typography,
+  Grid,
+  makeStyles,
+  Box,
+} from "@material-ui/core";
 
-import Layout from "../common/Layout";
+import Layout from "../Layout/Layout";
 import PostCard from "../common/Card/PostCard";
 import SnackBar from "../common/SnackBar";
 import useSnackState from "../hooks/useSnackState";
@@ -10,6 +16,7 @@ import { PostContext } from "../context/postContext";
 
 const useStyles = makeStyles({
   gridContainer: {
+    flexWrap: "wrap",
     alignContent: "stretch",
     alignItems: "stretch",
   },
@@ -19,12 +26,15 @@ const useStyles = makeStyles({
 });
 
 const Posts = () => {
-  const { posts, loading, success, error } = useContext(PostContext);
+  const { posts, loading, success, error, getPosts } = useContext(PostContext);
   const [open, handleClose, handleOpen] = useSnackState();
 
   const classes = useStyles();
 
   /* eslint-disable */
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   useEffect(() => {
     if (error) handleOpen();
@@ -34,12 +44,15 @@ const Posts = () => {
   if (!success && loading) return <Spiner />;
 
   if (!posts.length) return <p>There are no posts</p>;
+
   return (
     <>
       <CssBaseline />
       <Layout>
         <Typography component="div" align="center">
-          <h1>Trending Posts in JavaScripit & JavaScript frameworks </h1>
+          <Box fontSize="h2.fontSize" m={1}>
+            Trending Posts in JavaScripit & JavaScript frameworks
+          </Box>
         </Typography>
         <Grid container spacing={2} className={classes.gridContainer}>
           {posts.map((i) => (

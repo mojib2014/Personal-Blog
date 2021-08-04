@@ -16,6 +16,14 @@ const getPostById = async (post_id) => {
   }
 };
 
+const getAuthorPosts = async (author_id) => {
+  try {
+    return await http.get(`/posts/author/posts/${author_id}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
 const createPost = async (post) => {
   try {
     return await http.post("/posts/new", post);
@@ -75,6 +83,7 @@ const postService = {
   deletePost,
   likePost,
   disLikePost,
+  getAuthorPosts,
 };
 
 export default postService;

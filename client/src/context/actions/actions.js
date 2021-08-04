@@ -48,15 +48,17 @@ const setSelected = (post) => {
   };
 };
 
-const like = () => {
+const like = (post) => {
   return {
     type: actionTypes.LIKE,
+    payload: post,
   };
 };
 
-const disLike = () => {
+const disLike = (post) => {
   return {
     type: actionTypes.DISLIKE,
+    payload: post,
   };
 };
 
@@ -79,6 +81,13 @@ const getById = (user) => {
   };
 };
 
+const getAuthorPosts = (posts) => {
+  return {
+    type: actionTypes.GET_AUTHOR_POSTS,
+    payload: posts,
+  };
+};
+
 const postActions = {
   loading,
   error,
@@ -92,6 +101,7 @@ const postActions = {
   loginUser,
   logoutUser,
   getById,
+  getAuthorPosts,
 };
 
 export default postActions;

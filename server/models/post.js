@@ -9,6 +9,7 @@ module.exports = class Post {
     this.sub_title = data.sub_title;
     this.created = data.created || moment.utc().toISOString();
     this.modified = data.modified || moment.utc().toISOString();
+    this.liked = data.liked || "false";
     this.like_user_id = data.like_user_id || [];
     this.likes = data.likes || 0;
     this.author = data.author;
@@ -61,16 +62,17 @@ module.exports = class Post {
    */
   static async likePost(user_id, post_id) {
     try {
-      const statement = `UPDATE posts
-                  SET like_user_id = like_user_id || $1, likes = likes + 1
-                  WHERE NOT (like_user_id @> $1)
-                  AND id = ($2)`;
+      const statement = `UPDATE posts SET
+                          like_user_id = like_user_id || $1, likes = likes + 1
+                          WHERE NOT (like_user_id @> $1)
+                          AND id = ($2) RETURNING *`;
       const values = [[user_id], post_id];
 
       const result = await db.query(statement, values);
 
       if (result.rows.length) return result.rows[0];
     } catch (err) {
+      console.log("like: ", err);
       throw err;
     }
   }
@@ -79,13 +81,14 @@ module.exports = class Post {
     try {
       const statement = `UPDATE posts SET like_user_id = array_remove(like_user_id, $1), 
                         likes = likes -1
-                        WHERE id = $2`;
+                        WHERE id = $2 RETURNING *`;
       const values = [user_id, post_id];
 
       const result = await db.query(statement, values);
 
       if (result.rows.length) return result.rows[0];
     } catch (err) {
+      console.log("disLike: ", err);
       throw err;
     }
   }
@@ -135,6 +138,19 @@ module.exports = class Post {
       const statement = `SELECT * FROM posts ORDER BY created DESC`;
 
       const result = await db.query(statement);
+
+      if (result.rows.length) return result.rows;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async getAuthorPosts(author_id) {
+    try {
+      const statement = `SELECT * FROM posts WHERE author = $1`;
+      const values = [author_id];
+
+      const result = await db.query(statement, values);
 
       if (result.rows.length) return result.rows;
     } catch (err) {
