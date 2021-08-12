@@ -1,29 +1,17 @@
-import React, { useContext } from "react";
+import React from "react";
 import * as Yup from "yup";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  makeStyles,
-} from "@material-ui/core";
-import { Redirect } from "react-router-dom";
+import {FaLock} from "react-icons/fa";
+import {VscLoading} from "react-icons/vsc";
+import {Redirect} from "react-router-dom";
 
 import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
-import UserContext from "../context/userContext";
-import auth from "../services/authService";
+import Input from "../common/Input";
+import useAuth from "../hooks/useAuth";
+import PrimaryButton from "../common/PrimaryButton";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      marginBottom: theme.spacing(1),
-    },
-  },
-}));
-
-const LoginForm = (props) => {
-  const { loading, success, error, login } = useContext(UserContext);
-  const classes = useStyles();
+const LoginForm = props => {
+  const {user, loading, error, login} = useAuth();
 
   const schema = Yup.object().shape({
     email: Yup.string().email().required().label("Email"),
@@ -35,13 +23,12 @@ const LoginForm = (props) => {
     password: "",
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async values => {
     try {
       await login(values.email, values.password);
-      if (auth.getCurrentUser()) {
-        const { state } = props.location;
-        window.location = state ? state.from.pathname : "/";
-      }
+
+      const {state} = props.location;
+      window.location = state ? state.from.pathname : "/";
     } catch (ex) {
       console.log("login form handleSubmit: ", ex);
     }
@@ -49,55 +36,38 @@ const LoginForm = (props) => {
 
   const [formik, handleClose, open] = UseForm(values, schema, handleSubmit);
 
-  if (auth.getCurrentUser()) return <Redirect to="/" />;
+  if (user) return <Redirect to="/" />;
 
   return (
     <div className="content">
       <h1 className="form-title">Login Form</h1>
       <div className="form-content">
-        <form
-          onSubmit={formik.handleSubmit}
-          className={classes.root}
-          style={{ width: "500px", margin: "auto" }}
-        >
-          <TextField
-            fullWidth
+        <form onSubmit={formik.handleSubmit}>
+          <Input
             id="email"
             name="email"
             label="Email"
             type="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            required
-            helperText={formik.touched.email && formik.errors.email}
+            formik={formik}
+            icon="@"
           />
-          <TextField
-            fullWidth
+          <Input
             id="password"
             name="password"
             label="Password"
             type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            required
-            helperText={formik.touched.password && formik.errors.password}
+            formik={formik}
             autoComplete="current-password"
+            icon={<FaLock />}
           />
-          <Button color="primary" variant="contained" fullWidth type="submit">
-            {loading ? (
-              <CircularProgress color="secondary" size={25} />
-            ) : (
-              "Login"
-            )}
-          </Button>
+          <PrimaryButton>
+            {loading ? <VscLoading size={20} color="primary" /> : "Login"}
+          </PrimaryButton>
         </form>
       </div>
       <SnackBar
         err={error}
         severity={error ? "error" : "success"}
-        success={success}
         open={open}
         onClose={handleClose}
       />

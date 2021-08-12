@@ -1,28 +1,17 @@
-import React, { useContext } from "react";
+import React, {useContext} from "react";
 import * as Yup from "yup";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  makeStyles,
-} from "@material-ui/core";
+import {FaUser, FaLock} from "react-icons/fa";
+import {VscLoading} from "react-icons/vsc";
 
-import UserContext from "../context/userContext";
+import PrimaryButton from "../common/PrimaryButton";
+import Input from "../common/Input";
+import {UserContext} from "../context/UserProvider";
 import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
 import auth from "../services/authService";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      marginBottom: theme.spacing(1),
-    },
-  },
-}));
-
 const RegisterForm = () => {
-  const { loading, success, error, register } = useContext(UserContext);
-  const classes = useStyles();
+  const {loading, success, error, register} = useContext(UserContext);
 
   const values = {
     first_name: "",
@@ -38,7 +27,7 @@ const RegisterForm = () => {
     password: Yup.string().min(6).required().label("password"),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async values => {
     register(values);
     if (auth.getCurrentUser()) window.location = "/";
   };
@@ -49,60 +38,42 @@ const RegisterForm = () => {
     <div className="content">
       <h1 className="form-title">Register Form</h1>
       <div className="form-content">
-        <form onSubmit={formik.handleSubmit} className={classes.root}>
-          <TextField
-            fullWidth
-            id="first_name"
+        <form onSubmit={formik.handleSubmit}>
+          <Input
             name="first_name"
-            label="First Name"
             type="first_name"
-            value={formik.values.first_name}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.first_name && Boolean(formik.errors.first_name)
-            }
-            helperText={formik.touched.first_name && formik.errors.first_name}
+            label="First Name"
+            id="first_name"
+            formik={formik}
+            icon={<FaUser />}
           />
-          <TextField
-            fullWidth
-            id="last_name"
+          <Input
             name="last_name"
-            label="Last Name"
             type="last_name"
-            value={formik.values.last_name}
-            onChange={formik.handleChange}
-            error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-            helperText={formik.touched.last_name && formik.errors.last_name}
+            label="Last Name"
+            id="last_name"
+            formik={formik}
+            icon={<FaUser />}
           />
-          <TextField
-            fullWidth
-            id="email"
+          <Input
             name="email"
-            label="Email"
             type="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
+            label="Email"
+            id="email"
+            formik={formik}
+            icon="@"
           />
-          <TextField
-            fullWidth
-            id="password"
+          <Input
             name="password"
-            label="Password"
             type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
+            label="Password"
+            id="password"
+            formik={formik}
+            icon={<FaLock />}
           />
-          <Button color="primary" variant="contained" type="submit" fullWidth>
-            {loading ? (
-              <CircularProgress color="secondary" size={25} />
-            ) : (
-              "Register"
-            )}
-          </Button>
+          <PrimaryButton>
+            {loading ? <VscLoading color="secondary" size={25} /> : "Register"}
+          </PrimaryButton>
         </form>
       </div>
       <SnackBar

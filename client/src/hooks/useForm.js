@@ -1,4 +1,4 @@
-import { useFormik } from "formik";
+import {useFormik} from "formik";
 import useSnackState from "./useSnackState";
 
 const UseForm = (values, schema, handleSubmit) => {
@@ -7,7 +7,7 @@ const UseForm = (values, schema, handleSubmit) => {
   const formik = useFormik({
     initialValues: values,
     validationSchema: schema,
-    onSubmit: (values) => {
+    onSubmit: values => {
       handleOpen(true);
 
       handleSubmit(values);

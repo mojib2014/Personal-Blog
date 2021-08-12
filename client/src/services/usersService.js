@@ -1,14 +1,6 @@
 import http from "./httpService";
 
-const registerUser = async (user) => {
-  try {
-    return await http.post("/users/register", user);
-  } catch (err) {
-    throw err;
-  }
-};
-
-const getUserByEmail = async (email) => {
+const getUserByEmail = async email => {
   try {
     return await http.get(`/users/${email}`);
   } catch (err) {
@@ -16,7 +8,7 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const getUserPosts = async (user_id) => {
+const getUserPosts = async user_id => {
   try {
     return await http.get(`/users/user/posts/${user_id}`);
   } catch (err) {
@@ -24,7 +16,7 @@ const getUserPosts = async (user_id) => {
   }
 };
 
-const getUserById = async (user_id) => {
+const getUserById = async user_id => {
   try {
     return await http.get(`/users/user/${user_id}`);
   } catch (err) {
@@ -48,7 +40,6 @@ const getUserById = async (user_id) => {
 //   }
 // };
 const userService = {
-  registerUser,
   getUserByEmail,
   getUserPosts,
   getUserById,

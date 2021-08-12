@@ -14,7 +14,6 @@ router.get("/", async (req, res, next) => {
 
 router.get("/post/:id", async (req, res, next) => {
   const { id } = req.params;
-
   try {
     const post = await Post.getPostById(id);
 
@@ -38,6 +37,16 @@ router.get("/author/posts/:id", async (req, res, next) => {
 router.post("/new", async (req, res, next) => {
   try {
     const data = req.body;
+    const { file } = req.files;
+
+    file.mv(`${process.cwd()}/client/public/uploads/`, (err) => {
+      if (err) {
+        console.log("moving file err: ", err);
+        res.status(500).send(err);
+      }
+    });
+
+    data.cover_image = `/public/uploads/${file.name}`;
 
     const postInstance = new Post(data);
     const post = await postInstance.createPost();
@@ -50,7 +59,6 @@ router.post("/new", async (req, res, next) => {
 
 router.put("/post/update", async (req, res, next) => {
   const data = req.body;
-  console.log("post update: ", data.id);
   try {
     const post = await Post.getPostById(data.id);
     if (!post)

@@ -1,19 +1,18 @@
 import React from "react";
-import { makeStyles, Container } from "@material-ui/core";
+import styled from "styled-components";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(15),
-  },
-}));
-
-export default function Layout({ children }) {
-  const classes = useStyles();
-  return (
-    <>
-      <Container maxWidth="lg" className={classes.root}>
-        {children}
-      </Container>
-    </>
-  );
+export default function Layout({children}) {
+  return <Container className="layout">{children}</Container>;
 }
+
+const Container = styled.div`
+  width: 90%;
+  max-width: 1200px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 100px;
+  @media (max-width: 467px) {
+    width: 100%;
+    max-width: 100%;
+  }
+`;
