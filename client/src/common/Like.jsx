@@ -1,25 +1,28 @@
 import PropTypes from "prop-types";
 import {FaHeart} from "react-icons/fa";
 import styled from "styled-components";
+import ErrorBoundary from "../components/ErrorBoundary";
 import auth from "../services/authService";
 
 export default function Like({item, onLike}) {
   return (
-    <Container>
-      <FaHeart
-        className="fa-heart"
-        aria-label="add to favorites"
-        title="Add to favorites"
-        color={
-          auth.getCurrentUser() &&
-          item.like_user_id.includes(auth.getCurrentUser().id)
-            ? "#F4070A"
-            : "inherit"
-        }
-        onClick={() => onLike(item)}
-      />
-      <Badge>{item.likes}</Badge>
-    </Container>
+    <ErrorBoundary>
+      <Container>
+        <FaHeart
+          className="fa-heart"
+          aria-label="add to favorites"
+          title="Add to favorites"
+          color={
+            auth.getCurrentUser() &&
+            item.like_user_id.includes(auth.getCurrentUser().id)
+              ? "#F4070A"
+              : "inherit"
+          }
+          onClick={() => onLike(item)}
+        />
+        <Badge>{item.likes}</Badge>
+      </Container>
+    </ErrorBoundary>
   );
 }
 
@@ -57,7 +60,7 @@ const Badge = styled.span`
   border-radius: 10px;
   flex-direction: row;
   justify-content: center;
-  top: 0;
+  top: -4px;
   right: 0;
   transform: scale(1) translate(50%, -50%);
   transform-origin: 100% 0%;

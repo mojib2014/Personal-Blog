@@ -30,6 +30,13 @@ export default function Navbar() {
               </Link>
             </MenuItemDiv>
           )}
+          {!user && (
+            <MenuItemDiv>
+              <Link className="nav-link" to="/register">
+                Register
+              </Link>
+            </MenuItemDiv>
+          )}
           {user && (
             <MenuItemDiv>
               <Link className="nav-link" to="#" onClick={logout}>

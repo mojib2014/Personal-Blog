@@ -26,8 +26,8 @@ const AuthProvider = ({children}) => {
   const register = async (email, password) => {
     dispatch({type: "loading"});
     try {
-      await auth.registerUser({email, password});
-
+      const {data: token} = await auth.registerUser(email, password);
+      auth.loginWithJwt(token);
       dispatch({type: "register"});
     } catch (err) {
       dispatch({type: "error", payload: err.response.data || err.message});

@@ -21,26 +21,26 @@ const Card = ({item}) => {
         <CardSubtitle>{item.sub_title}</CardSubtitle>
       </CardContent>
       <CardActions className="card-actions">
-        <CardActionContainer>
-          <CardSubtitle>Likes: {item.likes}</CardSubtitle>
-        </CardActionContainer>
-        <CardActionContainer>
+        <CardAction>
+          <CardSubtitle>
+            {item.likes > 1 ? `Likes: ${item.likes}` : `Likes ${item.likes}`}
+          </CardSubtitle>
+        </CardAction>
+        <CardAction>
           <Button>
-            <MdShare aria-label="share" size={20} color="#1967d2" />
+            <MdShare aria-label="share" size={16} color="#1967d2" />
           </Button>
-        </CardActionContainer>
-        <CardActionContainer>
+        </CardAction>
+        <CardAction>
           <Link to={`/posts/${formatSlug(item.title)}/${item.id}`}>
-            <Button size="small" color="primary">
-              Read
-            </Button>
+            <Button>Read</Button>
           </Link>
-        </CardActionContainer>
-        <CardActionContainer>
+        </CardAction>
+        <CardAction>
           <CardSubtitle style={{fontSize: ".7rem"}}>
             {getReadingTime(item.body)}
           </CardSubtitle>
-        </CardActionContainer>
+        </CardAction>
       </CardActions>
     </Container>
   );
@@ -61,6 +61,7 @@ const Container = styled.div`
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  font-size: 1rem;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   -moz-flex-direction: column;
@@ -84,7 +85,6 @@ const CardTitleContainer = styled.div`
 
 const Title = styled.h2`
   color: rgba(0, 0, 0, 0.83);
-  font-size: 1.5rem;
   font-weight: 400;
   line-height: 1.335;
   letter-spacing: 0em;
@@ -108,7 +108,6 @@ const CardContent = styled.div`
 const CardSubtitle = styled.p`
   color: rgba(0, 0, 0, 0.54);
   display: block;
-  font-size: 0.875rem;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.43;
@@ -124,9 +123,8 @@ const CardActions = styled.div`
   justify-content: space-evenly;
 `;
 
-const CardActionContainer = styled.div`
+const CardAction = styled.div`
   flex-basis: auto;
-  padding: 3px;
 `;
 
 const Button = styled.button`

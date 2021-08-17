@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Card from "../common/Card";
+import ErrorBoundary from "./ErrorBoundary";
 
 export default function Posts({items}) {
   if (!items.length)
@@ -11,13 +12,15 @@ export default function Posts({items}) {
       </p>
     );
   return (
-    <GridContainer>
-      {items.map(i => (
-        <GridItem key={i.id}>
-          <Card item={i} />
-        </GridItem>
-      ))}
-    </GridContainer>
+    <ErrorBoundary>
+      <GridContainer>
+        {items.map(i => (
+          <GridItem key={i.id}>
+            <Card item={i} />
+          </GridItem>
+        ))}
+      </GridContainer>
+    </ErrorBoundary>
   );
 }
 

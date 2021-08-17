@@ -7,19 +7,22 @@ html {
 *,
 ::after,
 *::before {
-  box-sizing: inherit;
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background-color: #f8f9fa;
   color: rgba(0, 0, 0, 0.87);
-  font-size: 0.875rem;
+  font-size: 18px;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
-  line-height: 1.43;
+  line-height: 1.5;
   letter-spacing: 0.01071em;
-  margin: 0;
-  padding: 0;
 }
 
 p {
@@ -63,25 +66,15 @@ textarea {
   line-height: inherit;
 }
 
-.content {
-  width: 90%;
-  max-width: 1290px;
-  margin: auto;
-}
-
 .disabled {
   background-color: dodgerblue;
 }
 
-.form-content {
+/* .form-content {
   width: 50%;
   max-width: 800px;
   margin: auto;
-}
-
-.MuiButton-containedPrimary {
-  margin: 15px auto !important;
-}
+} */
 
 .form-title {
   text-align: center;
@@ -94,7 +87,7 @@ textarea {
   width: 1em;
   height: 1em;
   display: inline-block;
-  font-size: 1.5rem;
+  font-size: 2rem;
   transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   flex-shrink: 0;
   user-select: none;
@@ -102,4 +95,45 @@ textarea {
 
 .w-md-editor {
   margin-bottom: 1rem;
+}
+
+.w-md-editor-text-input {
+  color: rgba(0, 0, 0, 0.84);
+}
+
+.wmde-markdown pre code {
+  background-color: rgba(0, 0, 0, 0.84);
+  text-shadow: none;
+  font-size: 1rem;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.keyword {
+  color: #f078be;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.function {
+  color: #50fa7b;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.punctuation {
+  color: #e4e5e1;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.comment,
+.wmde-markdown-color code[class*="language-"] .token.block-comment,
+.wmde-markdown-color code[class*="language-"] .token.prolog,
+.wmde-markdown-color code[class*="language-"] .token.doctype,
+.wmde-markdown-color code[class*="language-"] .token.cdata {
+  color: #596893;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.string {
+  color: #f0f98c;
+}
+
+.wmde-markdown-color code[class*="language-"] .token.operator,
+.wmde-markdown-color code[class*="language-"] .token.entity,
+.wmde-markdown-color code[class*="language-"] .token.url,
+.wmde-markdown-color code[class*="language-"] .token.variable {
+  background-color: none;
 }

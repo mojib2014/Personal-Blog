@@ -6,13 +6,18 @@ export default function Layout({children}) {
 }
 
 const Container = styled.div`
-  width: 90%;
+  width: 70%;
   max-width: 1200px;
   margin-right: auto;
   margin-left: auto;
   margin-top: 100px;
+  @media (max-width: 800px) {
+    width: 90%;
+  }
   @media (max-width: 467px) {
     width: 100%;
     max-width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem;
   }
 `;

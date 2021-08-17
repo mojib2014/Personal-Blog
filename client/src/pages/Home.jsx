@@ -7,6 +7,7 @@ import Posts from "../components/Posts";
 import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common/Spinner";
 import usePostsState from "../hooks/usePostsState";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const Home = () => {
   const {posts, loading, success, error, getPosts} = usePostsState();
@@ -27,7 +28,7 @@ const Home = () => {
   if (!posts.length) return <Paragraph>There are no posts</Paragraph>;
 
   return (
-    <>
+    <ErrorBoundary>
       <Layout>
         <TitleContainer>
           <Title>Trending Posts in JavaScripit & JavaScript frameworks</Title>
@@ -43,7 +44,7 @@ const Home = () => {
           onClose={handleClose}
         />
       )}
-    </>
+    </ErrorBoundary>
   );
 };
 

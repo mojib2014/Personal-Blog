@@ -7,6 +7,7 @@ import SnackBar from "../common/SnackBar";
 import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common/Spinner";
 import Layout from "../Layout/Layout";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 export default function Profile({match}) {
   const [author, getAuthor] = useAuthor();
@@ -24,7 +25,7 @@ export default function Profile({match}) {
   /* eslint-enable */
 
   return (
-    <>
+    <ErrorBoundary>
       <ProfileHeader>
         <CoverPhotoContainer>
           <CoverImage src="/images/cover.PNG" alt="mojib's avatar" />
@@ -50,7 +51,7 @@ export default function Profile({match}) {
         severity={err ? "error" : "success"}
         onClose={handleClose}
       />
-    </>
+    </ErrorBoundary>
   );
 }
 

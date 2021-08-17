@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import {VscCloudUpload} from "react-icons/vsc";
 
-const FileInput = ({name, label, onChange, error, ...rest}) => {
+const FileInput = ({name, label, type = "file", onChange, error, ...rest}) => {
   return (
-    <InputGroup className="file-upload-container">
+    <InputGroup>
       <InputGroupPrepend>
         <InputGroupText htmlFor={rest.id}>
           <VscCloudUpload />
@@ -14,7 +14,7 @@ const FileInput = ({name, label, onChange, error, ...rest}) => {
       <FormControl
         {...rest}
         name={name}
-        type="file"
+        type={type}
         label={label}
         placeholder="Chose an image"
         onChange={onChange}
@@ -27,8 +27,12 @@ const FileInput = ({name, label, onChange, error, ...rest}) => {
 export default FileInput;
 
 FileInput.propTypes = {
-  filename: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  error: PropTypes.string,
+  rest: PropTypes.object,
 };
 
 const InputGroup = styled.div`

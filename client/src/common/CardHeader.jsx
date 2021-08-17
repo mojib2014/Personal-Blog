@@ -8,12 +8,11 @@ import formatDate from "../utils/formatDate";
 const Cardheader = ({item}) => {
   const [author, getAuthor] = useAuthor();
 
-  /* eslint-disable */
   useEffect(() => {
     getAuthor(item.author);
-  }, [item.author]);
-  /* eslint-enable */
-  console.log("card: ", author);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item]);
+
   return (
     <>
       {author && (

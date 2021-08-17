@@ -7,6 +7,7 @@ import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common/Spinner";
 import useUserPosts from "../hooks/useUserPosts";
 import auth from "../services/authService.js";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 export default function Profile() {
   const {userPosts, loading, err, getUserPosts} = useUserPosts();
@@ -19,7 +20,7 @@ export default function Profile() {
 
   /* eslint-enable */
   return (
-    <>
+    <ErrorBoundary>
       <ProfileHeader>
         <CoverPhotoContainer>
           <CoverImage src="/images/cover.PNG" alt="mojib's avatar" />
@@ -45,7 +46,7 @@ export default function Profile() {
         severity={err ? "error" : "success"}
         onClose={handleClose}
       />
-    </>
+    </ErrorBoundary>
   );
 }
 

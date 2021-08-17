@@ -7,15 +7,16 @@ import Alert from "../common/Alert";
 import Spinner from "../common/Spinner";
 import Like from "../common/Like";
 import usePostsState from "../hooks/usePostsState";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const PostDetails = ({match}) => {
   const {posts, error, loading, getPosts, handleLike} = usePostsState();
 
-  /* eslint-disable */
   useEffect(() => {
     getPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  /* eslint-enable */
+
   const selectedPost = posts.filter(post => post.id === +match.params.id)[0];
 
   if (loading) return <Spinner />;
@@ -26,16 +27,18 @@ const PostDetails = ({match}) => {
   return (
     <>
       {selectedPost && (
-        <Layout>
-          <TitleContainer>
-            <Title>{selectedPost.title}</Title>
-            <Subtitle>{selectedPost.sub_title}</Subtitle>
-          </TitleContainer>
-          <Like item={selectedPost} onLike={handleLike} />
-          <Container>
-            <MDEditor.Markdown source={selectedPost.body} />
-          </Container>
-        </Layout>
+        <ErrorBoundary>
+          <Layout>
+            <TitleContainer>
+              <Title>{selectedPost.title}</Title>
+              <Subtitle>{selectedPost.sub_title}</Subtitle>
+            </TitleContainer>
+            <Like item={selectedPost} onLike={handleLike} />
+            <Container>
+              <MDEditor.Markdown source={selectedPost.body} />
+            </Container>
+          </Layout>
+        </ErrorBoundary>
       )}
     </>
   );

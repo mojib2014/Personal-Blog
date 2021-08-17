@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import * as Yup from "yup";
 import styled from "styled-components";
 import {MdTitle, MdSubtitles} from "react-icons/md";
@@ -12,8 +12,11 @@ import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
 import usePostsState from "../hooks/usePostsState";
 import FileInput from "../common/FileInput";
+import {UserContext} from "../context/UserProvider";
+import ErrorBoundary from "./ErrorBoundary";
 
 export default function PostForm() {
+  const {user} = useContext(UserContext);
   const {loading, error, addPost} = usePostsState();
   const [value, setValue] = useState("");
   const [image, setImage] = useState("");
@@ -32,7 +35,12 @@ export default function PostForm() {
     formData.append("file", image);
     formData.append(
       "item",
-      JSON.stringify({...values, body: value, cover_image: ""}),
+      JSON.stringify({
+        ...values,
+        body: value,
+        cover_image: "",
+        author: user.id,
+      }),
     );
 
     await addPost(formData);
@@ -48,58 +56,60 @@ export default function PostForm() {
   );
 
   return (
-    <Layout className="content">
-      <Title>Post Form</Title>
-      <div className="form-content">
-        <form onSubmit={formik.handleSubmit}>
-          <FileInput
-            id="cover-image"
-            name="cover-image"
-            label="Cover Image"
-            onChange={handleFileChange}
-          />
-          <Input
-            id="title"
-            type="text"
-            name="title"
-            label="Title"
-            formik={formik}
-            icon={<MdTitle />}
-            placeholder="Title goes here"
-          />
-          <Input
-            id="sub_title"
-            type="text"
-            name="sub_title"
-            label="Subtitle"
-            formik={formik}
-            icon={<MdSubtitles />}
-            placeholder="Subtitle goes here"
-          />
-          <BodyDescription>
-            Use
-            <MarkdownLink
-              href="https://www.markdownguide.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Markdown Guide
-            </MarkdownLink>
-            to write and format posts.
-          </BodyDescription>
-          <MDEditor value={value} onChange={setValue} required />
-          <PrimaryButton disabled={loading}>
-            {loading ? <VscLoading size={20} /> : "Submit"}
-          </PrimaryButton>
-        </form>
-      </div>
-      <SnackBar
-        open={open}
-        err={error}
-        severity={error ? "error" : "success"}
-        onClose={handleClose}
-      />
-    </Layout>
+    <ErrorBoundary>
+      <Layout className="content">
+        <Title>Post Form</Title>
+        <div className="form-content">
+          <form onSubmit={formik.handleSubmit}>
+            <FileInput
+              id="cover-image"
+              name="cover-image"
+              label="Cover Image"
+              onChange={handleFileChange}
+            />
+            <Input
+              id="title"
+              type="text"
+              name="title"
+              label="Title"
+              formik={formik}
+              icon={<MdTitle />}
+              placeholder="Title goes here"
+            />
+            <Input
+              id="sub_title"
+              type="text"
+              name="sub_title"
+              label="Subtitle"
+              formik={formik}
+              icon={<MdSubtitles />}
+              placeholder="Subtitle goes here"
+            />
+            <BodyDescription>
+              Use
+              <MarkdownLink
+                href="https://www.markdownguide.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Markdown Guide
+              </MarkdownLink>
+              to write and format posts.
+            </BodyDescription>
+            <MDEditor value={value} onChange={setValue} required />
+            <PrimaryButton disabled={loading}>
+              {loading ? <VscLoading size={20} /> : "Submit"}
+            </PrimaryButton>
+          </form>
+        </div>
+        <SnackBar
+          open={open}
+          err={error}
+          severity={error ? "error" : "success"}
+          onClose={handleClose}
+        />
+      </Layout>
+    </ErrorBoundary>
   );
 }
 

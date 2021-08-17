@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 export default function Input({
@@ -28,6 +29,18 @@ export default function Input({
     </InputGroup>
   );
 }
+
+Input.propTypes = {
+  name: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  formik: PropTypes.object.isRequired,
+  icon: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.object.isRequired,
+  ]),
+  rest: PropTypes.object,
+};
 
 const InputGroup = styled.div`
   position: relative;

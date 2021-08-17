@@ -9,6 +9,8 @@ import UseForm from "../hooks/useForm";
 import Input from "../common/Input";
 import useAuth from "../hooks/useAuth";
 import PrimaryButton from "../common/PrimaryButton";
+import ErrorBoundary from "./ErrorBoundary";
+import Layout from "../Layout/Layout";
 
 const LoginForm = props => {
   const {user, loading, error, login} = useAuth();
@@ -39,39 +41,41 @@ const LoginForm = props => {
   if (user) return <Redirect to="/" />;
 
   return (
-    <div className="content">
-      <h1 className="form-title">Login Form</h1>
-      <div className="form-content">
-        <form onSubmit={formik.handleSubmit}>
-          <Input
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            formik={formik}
-            icon="@"
-          />
-          <Input
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            formik={formik}
-            autoComplete="current-password"
-            icon={<FaLock />}
-          />
-          <PrimaryButton>
-            {loading ? <VscLoading size={20} color="primary" /> : "Login"}
-          </PrimaryButton>
-        </form>
-      </div>
-      <SnackBar
-        err={error}
-        severity={error ? "error" : "success"}
-        open={open}
-        onClose={handleClose}
-      />
-    </div>
+    <ErrorBoundary>
+      <Layout className="content">
+        <h1 className="form-title">Login Form</h1>
+        <div className="form-content">
+          <form onSubmit={formik.handleSubmit}>
+            <Input
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              formik={formik}
+              icon="@"
+            />
+            <Input
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              formik={formik}
+              autoComplete="current-password"
+              icon={<FaLock />}
+            />
+            <PrimaryButton>
+              {loading ? <VscLoading size={20} color="primary" /> : "Login"}
+            </PrimaryButton>
+          </form>
+        </div>
+        <SnackBar
+          err={error}
+          severity={error ? "error" : "success"}
+          open={open}
+          onClose={handleClose}
+        />
+      </Layout>
+    </ErrorBoundary>
   );
 };
 
