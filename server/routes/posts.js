@@ -36,17 +36,15 @@ router.get("/author/posts/:id", async (req, res, next) => {
 
 router.post("/new", async (req, res, next) => {
   try {
-    const data = req.body;
+    const data = JSON.parse(req.body.item);
     const { file } = req.files;
 
-    file.mv(`${process.cwd()}/client/public/uploads/`, (err) => {
-      if (err) {
-        console.log("moving file err: ", err);
-        res.status(500).send(err);
-      }
+    file.mv(`${process.cwd()}/client/public/uploads/${file.name}`, (err) => {
+      if (err) throw err;
+      console.log("file upload success");
     });
 
-    data.cover_image = `/public/uploads/${file.name}`;
+    data.cover_image = `/uploads/${file.name}`;
 
     const postInstance = new Post(data);
     const post = await postInstance.createPost();

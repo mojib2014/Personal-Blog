@@ -1,10 +1,12 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import * as Yup from "yup";
 import styled from "styled-components";
 import {MdTitle, MdSubtitles} from "react-icons/md";
 import MDEditor from "@uiw/react-md-editor";
 import {VscLoading} from "react-icons/vsc";
 
+import Title from "../common/Title";
+import Form from "../common/Form";
 import Input from "../common/Input";
 import PrimaryButton from "../common/PrimaryButton";
 import Layout from "../Layout/Layout";
@@ -12,11 +14,10 @@ import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
 import usePostsState from "../hooks/usePostsState";
 import FileInput from "../common/FileInput";
-import {UserContext} from "../context/UserProvider";
 import ErrorBoundary from "./ErrorBoundary";
+import auth from "../services/authService";
 
 export default function PostForm() {
-  const {user} = useContext(UserContext);
   const {loading, error, addPost} = usePostsState();
   const [value, setValue] = useState("");
   const [image, setImage] = useState("");
@@ -39,7 +40,7 @@ export default function PostForm() {
         ...values,
         body: value,
         cover_image: "",
-        author: user.id,
+        author: auth.getCurrentUser().id,
       }),
     );
 
@@ -57,51 +58,49 @@ export default function PostForm() {
 
   return (
     <ErrorBoundary>
-      <Layout className="content">
+      <Layout>
         <Title>Post Form</Title>
-        <div className="form-content">
-          <form onSubmit={formik.handleSubmit}>
-            <FileInput
-              id="cover-image"
-              name="cover-image"
-              label="Cover Image"
-              onChange={handleFileChange}
-            />
-            <Input
-              id="title"
-              type="text"
-              name="title"
-              label="Title"
-              formik={formik}
-              icon={<MdTitle />}
-              placeholder="Title goes here"
-            />
-            <Input
-              id="sub_title"
-              type="text"
-              name="sub_title"
-              label="Subtitle"
-              formik={formik}
-              icon={<MdSubtitles />}
-              placeholder="Subtitle goes here"
-            />
-            <BodyDescription>
-              Use
-              <MarkdownLink
-                href="https://www.markdownguide.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Markdown Guide
-              </MarkdownLink>
-              to write and format posts.
-            </BodyDescription>
-            <MDEditor value={value} onChange={setValue} required />
-            <PrimaryButton disabled={loading}>
-              {loading ? <VscLoading size={20} /> : "Submit"}
-            </PrimaryButton>
-          </form>
-        </div>
+        <Form onSubmit={formik.handleSubmit}>
+          <FileInput
+            id="cover-image"
+            name="cover-image"
+            label="Cover Image"
+            onChange={handleFileChange}
+          />
+          <Input
+            id="title"
+            type="text"
+            name="title"
+            label="Title"
+            formik={formik}
+            icon={<MdTitle />}
+            placeholder="Title goes here"
+          />
+          <Input
+            id="sub_title"
+            type="text"
+            name="sub_title"
+            label="Subtitle"
+            formik={formik}
+            icon={<MdSubtitles />}
+            placeholder="Subtitle goes here"
+          />
+          <BodyDescription>
+            Use
+            <MarkdownLink
+              href="https://www.markdownguide.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Markdown Guide
+            </MarkdownLink>
+            to write and format posts.
+          </BodyDescription>
+          <MDEditor value={value} onChange={setValue} required />
+          <PrimaryButton disabled={loading}>
+            {loading ? <VscLoading size={20} /> : "Submit"}
+          </PrimaryButton>
+        </Form>
         <SnackBar
           open={open}
           err={error}
@@ -112,12 +111,6 @@ export default function PostForm() {
     </ErrorBoundary>
   );
 }
-
-const Title = styled.h1`
-  margin: 2.5rem auto;
-  text-align: center;
-  font-size: 2.5rem;
-`;
 
 const BodyDescription = styled.p`
   color: rgba(0, 0, 0, 0.78);

@@ -23,7 +23,7 @@ export default function Profile() {
     <ErrorBoundary>
       <ProfileHeader>
         <CoverPhotoContainer>
-          <CoverImage src="/images/cover.PNG" alt="mojib's avatar" />
+          <CoverImage src="/images/cover.PNG" alt="user avatar" />
         </CoverPhotoContainer>
         <Avatar>
           <ProfileImage src="/images/cover.PNG" alt="Author avatar" />

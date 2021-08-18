@@ -14,15 +14,15 @@ export default function Profile({match}) {
   const {userPosts, loading, err, getUserPosts} = useUserPosts();
   const [open, handleClose] = useSnackState();
 
-  /* eslint-disable  */
   useEffect(() => {
     getAuthor(match.params.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [match.params.id]);
 
   useEffect(() => {
     getUserPosts(author.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [author]);
-  /* eslint-enable */
 
   return (
     <ErrorBoundary>

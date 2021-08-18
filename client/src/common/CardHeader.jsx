@@ -20,6 +20,7 @@ const Cardheader = ({item}) => {
           <Link
             to={`/author/profile/${author.last_name}/${author.id}`}
             style={{textDecoration: "none"}}
+            title="Go to author's profile"
           >
             <Avatar aria-label="Author Profile">
               <AvatarCircle>
@@ -30,6 +31,7 @@ const Cardheader = ({item}) => {
           <Link
             to={`/author/profile/${author.last_name}/${author.id}`}
             style={{textDecoration: "none"}}
+            title="Go to author's profile"
           >
             <HeaderContent>
               <HeaderTitle>{"@" + author.last_name}</HeaderTitle>

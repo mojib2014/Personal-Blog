@@ -48,7 +48,7 @@ export default React.memo(PostDetails);
 
 const TitleContainer = styled.div`
   width: 100%;
-  margin: 3.5rem auto;
+  margin-bottom: 5rem;
 `;
 
 const Title = styled.h1`

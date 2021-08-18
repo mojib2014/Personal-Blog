@@ -1,58 +1,77 @@
 import {createContext, useCallback, useReducer} from "react";
 import auth from "../services/authService";
+import reducer from "./reducer";
+import actions from "./actions";
 
 export const AuthContext = createContext();
 
+const initialState = {
+  user: null,
+  is_authenticated: false,
+  loading: false,
+  error: null,
+};
+
 const AuthProvider = ({children}) => {
-  const [{is_authenticated, loading, error}, dispatch] = useReducer(
-    reducer,
-    initialState,
-  );
-
-  const login = useCallback(
-    async (email, password) => {
-      dispatch({type: "loading"});
-      try {
-        await auth.login(email, password);
-
-        dispatch({type: "login"});
-      } catch (err) {
-        dispatch({type: "error", payload: err.response.data || err.message});
-      }
-    },
-    [dispatch],
-  );
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const register = async (email, password) => {
-    dispatch({type: "loading"});
+    dispatch(actions.loading());
     try {
       const {data: token} = await auth.registerUser(email, password);
       auth.loginWithJwt(token);
-      dispatch({type: "register"});
+      await getCurrentUser();
+      dispatch(actions.register(state.user));
     } catch (err) {
-      dispatch({type: "error", payload: err.response.data || err.message});
+      dispatch(actions.error(err.response.data || err.message));
     }
   };
 
+  const login = useCallback(
+    async (email, password) => {
+      dispatch(actions.loading());
+      try {
+        await auth.login(email, password);
+        await getCurrentUser();
+        dispatch(actions.login(state.user));
+      } catch (err) {
+        dispatch(actions.error(err.response.data || err.message));
+      }
+    },
+    [state.user],
+  );
+
   const logout = useCallback(async () => {
     console.log("AuthProvider logout called");
-    dispatch({type: "loading"});
+    dispatch(actions.loading());
     try {
       auth.logout();
-      dispatch({type: "logout"});
+      dispatch(actions.logout());
     } catch (err) {
-      dispatch({type: "error", payload: err.response.data || err.message});
+      dispatch(actions.error(err.response.data || err.message));
     }
   }, [dispatch]);
+
+  const getCurrentUser = async () => {
+    dispatch(actions.loading());
+    try {
+      const user = await auth.getCurrentUser();
+      dispatch(actions.getCurrentUser(user));
+    } catch (err) {
+      dispatch(actions.error(err.response.data || err.message));
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
-        loading,
-        error,
-        is_authenticated,
+        user: state.user,
+        loading: state.loading,
+        error: state.error,
+        is_authenticated: state.is_authenticated,
         login,
         register,
         logout,
+        getCurrentUser,
       }}
     >
       {children}
@@ -61,59 +80,3 @@ const AuthProvider = ({children}) => {
 };
 
 export default AuthProvider;
-
-const initialState = {
-  is_authenticated: false,
-  loading: false,
-  error: null,
-};
-
-export const reducer = (state, {type, payload}) => {
-  switch (type) {
-    case "loading":
-      return {
-        ...state,
-        is_authenticated: false,
-        loading: true,
-        error: null,
-      };
-    case "error":
-      return {
-        ...state,
-        is_authenticated: false,
-        loading: false,
-        error: payload,
-      };
-    case "register":
-      return {
-        ...state,
-        user: payload,
-        is_authenticated: true,
-        loading: false,
-        error: null,
-      };
-    case "getCurrentUser":
-      return {
-        ...state,
-        loading: false,
-        error: null,
-      };
-    case "login":
-      return {
-        ...state,
-        is_authenticated: true,
-        loading: false,
-        error: null,
-      };
-    case "logout":
-      return {
-        ...state,
-        user: null,
-        loading: false,
-        is_authenticated: false,
-        error: null,
-      };
-    default:
-      return state;
-  }
-};

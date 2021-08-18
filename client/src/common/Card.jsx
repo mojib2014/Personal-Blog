@@ -28,11 +28,19 @@ const Card = ({item}) => {
         </CardAction>
         <CardAction>
           <Button>
-            <MdShare aria-label="share" size={16} color="#1967d2" />
+            <MdShare
+              aria-label="share"
+              size={16}
+              color="#1967d2"
+              title="Share On"
+            />
           </Button>
         </CardAction>
         <CardAction>
-          <Link to={`/posts/${formatSlug(item.title)}/${item.id}`}>
+          <Link
+            to={`/posts/${formatSlug(item.title)}/${item.id}`}
+            title="Read Topic"
+          >
             <Button>Read</Button>
           </Link>
         </CardAction>

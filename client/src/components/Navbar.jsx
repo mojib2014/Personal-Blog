@@ -1,17 +1,19 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 import SnackBar from "../common/SnackBar";
 import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common//Spinner";
-import useAuth from "../hooks/useAuth";
+import {AuthContext} from "../context/AuthProvider";
 
 export default function Navbar() {
-  const {user, loading, error, getCurrentUser, logout} = useAuth();
+  const {user, loading, error, getCurrentUser, logout} =
+    useContext(AuthContext);
   const {open, hnadleClose} = useSnackState();
 
   useEffect(() => {
     getCurrentUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

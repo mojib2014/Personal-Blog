@@ -32,9 +32,8 @@ export const logout = () => {
 function getCurrentUser() {
   try {
     const jwt = localStorage.getItem("token");
-    const decoded = jwtDecode(jwt);
-    delete decoded.password;
-    return decoded;
+
+    return jwtDecode(jwt);
   } catch (ex) {
     return null; // that means we don't have the current user.
   } // if there is an error we ignore that cause tachnically it's not our

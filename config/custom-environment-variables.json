@@ -1,4 +1,0 @@
-{
-  "db": "db_url",
-  "jwtPrivateKey": "blog_jwtPrivateKey"
-}

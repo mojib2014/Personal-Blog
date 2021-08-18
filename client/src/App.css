@@ -16,7 +16,7 @@ html {
 }
 
 body {
-  background-color: #f8f9fa;
+  background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   font-size: 18px;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -95,45 +95,4 @@ textarea {
 
 .w-md-editor {
   margin-bottom: 1rem;
-}
-
-.w-md-editor-text-input {
-  color: rgba(0, 0, 0, 0.84);
-}
-
-.wmde-markdown pre code {
-  background-color: rgba(0, 0, 0, 0.84);
-  text-shadow: none;
-  font-size: 1rem;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.keyword {
-  color: #f078be;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.function {
-  color: #50fa7b;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.punctuation {
-  color: #e4e5e1;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.comment,
-.wmde-markdown-color code[class*="language-"] .token.block-comment,
-.wmde-markdown-color code[class*="language-"] .token.prolog,
-.wmde-markdown-color code[class*="language-"] .token.doctype,
-.wmde-markdown-color code[class*="language-"] .token.cdata {
-  color: #596893;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.string {
-  color: #f0f98c;
-}
-
-.wmde-markdown-color code[class*="language-"] .token.operator,
-.wmde-markdown-color code[class*="language-"] .token.entity,
-.wmde-markdown-color code[class*="language-"] .token.url,
-.wmde-markdown-color code[class*="language-"] .token.variable {
-  background-color: none;
 }
