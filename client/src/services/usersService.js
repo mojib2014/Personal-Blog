@@ -24,6 +24,14 @@ const getUserById = async user_id => {
   }
 };
 
+const updateUser = async user => {
+  try {
+    return await http.put("/users/user", user);
+  } catch (err) {
+    throw err;
+  }
+};
+
 // const getUserProfileByUsername = async (username) => {
 //   try {
 //     return await http.get("/users/profile/username", { params: username });
@@ -43,6 +51,7 @@ const userService = {
   getUserByEmail,
   getUserPosts,
   getUserById,
+  updateUser,
   // getUserPostsByUsername,
   // getUserProfileByUsername,
 };

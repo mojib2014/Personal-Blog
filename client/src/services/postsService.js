@@ -21,17 +21,23 @@ const getAuthorPosts = async author_id => {
     return await http.get(`/posts/author/posts/${author_id}`);
   } catch (err) {
     throw err;
-  }
+  } 
 };
 
-const createPost = async formData => {
+const savePost = async formData => {
   try {
-    return await http.post("/posts/new", formData, {
+    const item = JSON.parse(formData.get("item"));
+    if (item.id) {
+      return http.put("/posts/post/update", formData);
+    }
+
+    return http.post("/posts/new", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   } catch (err) {
+    console.log("errorr postservice", err);
     throw err;
   }
 };
@@ -64,7 +70,7 @@ const deletePost = async post_id => {
 
 const likePost = async (user_id, post_id) => {
   try {
-    return await http.put("/posts/post/like", {user_id, post_id});
+    return await http.put(`/posts/post/like/${user_id}`, {post_id});
   } catch (err) {
     throw err;
   }
@@ -72,14 +78,14 @@ const likePost = async (user_id, post_id) => {
 
 const disLikePost = async (user_id, post_id) => {
   try {
-    return await http.put("/posts/post/dislike", {user_id, post_id});
+    return await http.put(`/posts/post/dislike/${user_id}`, {post_id});
   } catch (err) {
     throw err;
   }
 };
 
 const postService = {
-  createPost,
+  savePost,
   getAllPosts,
   getPostById,
   updatePostById,

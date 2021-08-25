@@ -2,16 +2,20 @@ import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 import {MdShare} from "react-icons/md";
-import formatDate from "../utils/formatDate";
 import getReadingTime from "../utils/getReadingTime";
 import Cardheader from "./CardHeader";
 import formatSlug from "../utils/formatSlug";
+import useAuthor from "../hooks/useAuthor";
 
 const Card = ({item}) => {
+  const {data: author, isLoading} = useAuthor(item.author);
+
   return (
     <Container>
-      <Cardheader item={item} />
-      <CardTitleContainer subheader={formatDate(item.created)}>
+      {author && (
+        <Cardheader author={author} />
+      )}
+      <CardTitleContainer>
         <Title>{item.title}</Title>
       </CardTitleContainer>
       <CardMedia>
@@ -38,16 +42,14 @@ const Card = ({item}) => {
         </CardAction>
         <CardAction>
           <Link
-            to={`/posts/${formatSlug(item.title)}/${item.id}`}
+            to={`/post-details/${formatSlug(item.title)}/${item.id}`}
             title="Read Topic"
           >
             <Button>Read</Button>
           </Link>
         </CardAction>
         <CardAction>
-          <CardSubtitle style={{fontSize: ".7rem"}}>
-            {getReadingTime(item.body)}
-          </CardSubtitle>
+          <CardSubtitle>{getReadingTime(item.body)}</CardSubtitle>
         </CardAction>
       </CardActions>
     </Container>
@@ -99,21 +101,28 @@ const Title = styled.h2`
 `;
 
 const CardMedia = styled.div`
-  display: block;
+  background-color: #ddd;
   background-size: cover;
+  display: block;
+  min-width: 100%;
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 100%;
+  background-color: #ddd;
   display: block;
+  min-width: 100%;
+  width: 100%;
+  min-height: 181.328px;
+  height: auto;
+  max-height: 250px;
+  object-fit: cover;
 `;
 
 const CardContent = styled.div`
   padding: 1rem 0;
 `;
 
-const CardSubtitle = styled.p`
+const CardSubtitle = styled.small`
   color: rgba(0, 0, 0, 0.54);
   display: block;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;

@@ -1,51 +1,104 @@
-import React, {useEffect} from "react";
+import React, {useState} from "react";
+import { useParams } from "react-router";
 import styled from "styled-components";
+import {FaCamera} from "react-icons/fa";
 import Layout from "../Layout/Layout";
 import Posts from "../components/Posts";
-import SnackBar from "../common/SnackBar";
-import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common/Spinner";
-import useUserPosts from "../hooks/useUserPosts";
-import auth from "../services/authService.js";
+import FileInput from "../common/FileInput";
 import ErrorBoundary from "../components/ErrorBoundary";
+import userService from "../services/usersService";
+import {useContext} from "react";
+import {AuthContext} from "../context/AuthProvider";
+import useAuthorPosts from "../hooks/useAuthorPosts";
+import useAuthor from "../hooks/useAuthor";
+import useDeletePost from "../hooks/useDeletePost";
 
-export default function Profile() {
-  const {userPosts, loading, err, getUserPosts} = useUserPosts();
-  const [open, handleClose] = useSnackState();
+export default function Profile({match}) {
+  const [image, setImage] = useState(null);
+  const [showBtn, setShowBtn] = useState(false);
+  const {user} = useContext(AuthContext);
+  const { id } = useParams();
+  const {data: author} = useAuthor(id ? id : user.id);
+  const {
+    data: authorPosts,
+    isLoading,
+    error,
+  } = useAuthorPosts(id ? id : user.id);
+  const { mutate: deletePost } = useDeletePost();
 
-  /* eslint-disable */
-  useEffect(() => {
-    getUserPosts(auth.getCurrentUser().id);
-  }, []);
+  const handleImageChange = e => {
+    setImage(e.target.files[0]);
+    setShowBtn(true);
+  };
 
-  /* eslint-enable */
+  const saveProfileImage = async e => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("user", JSON.stringify(user));
+
+    try {
+      await userService.updateUser(formData);
+    } catch (err) {
+      console.log("profile image upload: ", err);
+    }
+    setShowBtn(false);
+  };
+
   return (
     <ErrorBoundary>
-      <ProfileHeader>
-        <CoverPhotoContainer>
-          <CoverImage src="/images/cover.PNG" alt="user avatar" />
-        </CoverPhotoContainer>
-        <Avatar>
-          <ProfileImage src="/images/cover.PNG" alt="Author avatar" />
-        </Avatar>
-      </ProfileHeader>
+      {author && (
+        <ProfileHeader>
+          <CoverPhotoContainer>
+            {author ? (
+              <CoverImage
+                src={author.profile_image}
+                alt={`{author.last_name} avatar`}
+              />
+            ) : (
+              <CoverImage
+                src={user.profile_image}
+                alt={`user.last_name avatar`}
+              />
+            )}
+          </CoverPhotoContainer>
+          <Avatar>
+            <ProfileImage
+              src={author.profile_image || user.profile_image}
+              alt="Author avatar"
+            />
+            {user &&
+            <form>
+              <FileInput
+                className="inline-fileinput"
+                icon={<FaCamera />}
+                id="profile_image"
+                name="profile_image"
+                label="Profile Image"
+                onChange={handleImageChange}
+              />
+              {showBtn && (
+                <button onClick={saveProfileImage}>Save Image</button>
+              )}
+            </form>
+            }
+          </Avatar>
+        </ProfileHeader>
+      )}
       <div>profile info</div>
-      {loading ? (
+      {isLoading ? (
         <Spinner />
+      ) : error ? (
+        <p>Something failed: {error}</p>
       ) : (
         <Layout>
           <TitleContainer>
-            <Title>Your Posts</Title>
+            <Title>Posts</Title>
           </TitleContainer>
-          <Posts items={userPosts} />
+          <Posts items={authorPosts} onDeletePost={deletePost} />
         </Layout>
       )}
-      <SnackBar
-        open={open}
-        err={err}
-        severity={err ? "error" : "success"}
-        onClose={handleClose}
-      />
     </ErrorBoundary>
   );
 }
@@ -98,6 +151,7 @@ const CoverImage = styled.img`
 `;
 
 const Avatar = styled.div`
+  position: relative;
   border-radius: 50%;
   margin-top: -75px;
   width: 160px;

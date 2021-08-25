@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState} from "react";
 
 export default function useSnackState() {
   const [open, setOpen] = useState(false);

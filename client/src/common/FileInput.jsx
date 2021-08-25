@@ -1,25 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import {VscCloudUpload} from "react-icons/vsc";
 
 const FileInput = ({name, label, type = "file", onChange, error, ...rest}) => {
   return (
-    <InputGroup>
+    <InputGroup className={rest.className}>
       <InputGroupPrepend>
-        <InputGroupText htmlFor={rest.id}>
-          <VscCloudUpload />
-        </InputGroupText>
+        <InputGroupText htmlFor={rest.id}>{rest.icon}</InputGroupText>
       </InputGroupPrepend>
       <FormControl
         {...rest}
         name={name}
         type={type}
         label={label}
-        placeholder="Chose an image"
         onChange={onChange}
+        accept="image/*"
         required
       />
+      <Container>{error}</Container>
     </InputGroup>
   );
 };
@@ -36,24 +34,25 @@ FileInput.propTypes = {
 };
 
 const InputGroup = styled.div`
-  position: relative;
+  align-items: stretch;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
   -webkit-box-align: stretch;
   -ms-flex-align: stretch;
-  align-items: stretch;
   width: 100%;
   margin-bottom: 1rem;
+  position: relative;
 `;
 
 const InputGroupPrepend = styled.div`
-  margin-right: -1px;
+  cursor: pointer;
+  display: flex;
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  margin-right: -1px;
 `;
 
 const InputGroupText = styled.label`
@@ -95,5 +94,12 @@ const FormControl = styled.input`
   border-radius: 0.25rem;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; */
+`;
+
+const Container = styled.div`
+  width: 100%;
+  color: #721d24;
+  font-size: inherit;
+  padding: 0.3px 0;
 `;

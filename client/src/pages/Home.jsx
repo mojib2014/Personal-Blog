@@ -1,49 +1,32 @@
-import React, {useEffect} from "react";
 import styled from "styled-components";
 
 import Layout from "../Layout/Layout";
-import SnackBar from "../common/SnackBar";
 import Posts from "../components/Posts";
-import useSnackState from "../hooks/useSnackState";
 import Spinner from "../common/Spinner";
-import usePostsState from "../hooks/usePostsState";
+import usePosts from "../hooks/usePosts";
 import ErrorBoundary from "../components/ErrorBoundary";
 
 const Home = () => {
-  const {posts, loading, success, error, getPosts} = usePostsState();
-  const [open, handleClose, handleOpen] = useSnackState();
+  const {data, isLoading, isError, error} = usePosts();
 
-  /* eslint-disable */
-  useEffect(() => {
-    getPosts();
-  }, []);
+  if (isLoading) return <Spinner />;
 
-  useEffect(() => {
-    if (error) handleOpen();
-  }, [error]);
-
-  /* eslint-enable */
-  if (!success && loading) return <Spinner />;
-
-  if (!posts.length) return <Paragraph>There are no posts</Paragraph>;
+  if (!data.length) return <Paragraph>There are no posts</Paragraph>;
 
   return (
     <ErrorBoundary>
+      {isError && (
+        <details>
+          <p>Something failed</p>
+          <p>{error.message}</p>
+        </details>
+      )}
       <Layout>
         <TitleContainer>
           <Title>Trending Posts in JavaScripit & JavaScript frameworks</Title>
         </TitleContainer>
-        <Posts items={posts} />
+        <Posts items={data} />
       </Layout>
-      {error && (
-        <SnackBar
-          open={open}
-          severity={error ? "error" : "success"}
-          err={error}
-          success={success}
-          onClose={handleClose}
-        />
-      )}
     </ErrorBoundary>
   );
 };

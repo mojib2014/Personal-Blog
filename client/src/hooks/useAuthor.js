@@ -1,13 +1,8 @@
-import {useState} from "react";
-import userService from "../services/usersService";
+import axios from "axios";
+import {useQuery} from "react-query";
 
-export default function useAuthor() {
-  const [author, setAuthor] = useState({});
-
-  const getAuthor = async author_id => {
-    const {data} = await userService.getUserById(author_id);
-    setAuthor(data);
-  };
-
-  return [author, getAuthor];
+export default function useAuthor(author_id) {
+  return useQuery(author_id && ["author_id", author_id], () =>
+    axios.get(`/users/user/${author_id}`).then(res => res.data),
+  );
 }

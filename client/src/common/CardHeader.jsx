@@ -1,18 +1,10 @@
-import React, {useEffect} from "react";
+import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
-import useAuthor from "../hooks/useAuthor";
 import formatDate from "../utils/formatDate";
 
-const Cardheader = ({item}) => {
-  const [author, getAuthor] = useAuthor();
-
-  useEffect(() => {
-    getAuthor(item.author);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item]);
-
+const Cardheader = ({author}) => {
   return (
     <>
       {author && (
@@ -45,13 +37,13 @@ const Cardheader = ({item}) => {
 };
 
 Cardheader.propTypes = {
-  item: PropTypes.object.isRequired,
+  author: PropTypes.object,
 };
 
 export default React.memo(Cardheader);
 
 const HeaderContainer = styled.div`
-  padding: 0.5rem 0;
+  align-items: center;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -59,7 +51,7 @@ const HeaderContainer = styled.div`
   flex-wrap: wrap;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center;
+  padding: 0.5rem 0;
 `;
 
 const Avatar = styled.div`
@@ -113,3 +105,5 @@ const HeaderSubtitle = styled.span`
   line-height: 1.43;
   letter-spacing: 0.01071em;
 `;
+
+

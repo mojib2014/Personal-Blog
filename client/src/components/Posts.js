@@ -50,7 +50,7 @@ const GridItem = styled.div`
   flex-basis: 25%;
   align-self: stretch;
   padding: 8px;
-  @media (max-width: 1167px) {
+  @media (max-width: 1440px) {
     max-width: 30%;
     flex-basis: 30%;
   }

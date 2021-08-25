@@ -14,7 +14,6 @@ class ErrorBoundary extends Component {
 
   render() {
     if (this.state.error) {
-      console.log("error: mmm", this.state.error);
       return (
         <Layout>
           <Container role="alert">

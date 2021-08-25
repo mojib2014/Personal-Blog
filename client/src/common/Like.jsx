@@ -1,42 +1,42 @@
 import PropTypes from "prop-types";
-import {FaHeart} from "react-icons/fa";
+import {FaArrowUp, FaArrowDown} from "react-icons/fa";
 import styled from "styled-components";
 import ErrorBoundary from "../components/ErrorBoundary";
-import auth from "../services/authService";
 
-export default function Like({item, onLike}) {
+export default function Like({item, onUpvote, onDownvote}) {
   return (
     <ErrorBoundary>
       <Container>
-        <FaHeart
-          className="fa-heart"
-          aria-label="add to favorites"
-          title="Add to favorites"
-          color={
-            auth.getCurrentUser() &&
-            item.like_user_id.includes(auth.getCurrentUser().id)
-              ? "#F4070A"
-              : "inherit"
-          }
-          onClick={() => onLike(item)}
+        <FaArrowUp
+          aria-label="Upvote"
+          title="Upvote"
+          style={{cursor: "pointer"}}
+          onClick={() => onUpvote(item)}
         />
         <Badge>{item.likes}</Badge>
       </Container>
+      <FaArrowDown
+        aria-label="Downvote"
+        title="Downvote"
+        style={{cursor: "pointer"}}
+        onClick={() => onDownvote(item)}
+      />
     </ErrorBoundary>
   );
 }
 
 Like.propTypes = {
   item: PropTypes.object.isRequired,
-  onLike: PropTypes.func.isRequired,
+  onUpvote: PropTypes.func.isRequired,
+  onDownvote: PropTypes.func.isRequired,
 };
 
-const Container = styled.span`
-  display: inline-flex;
+const Container = styled.div`
   position: relative;
   flex-shrink: 0;
   vertical-align: middle;
   margin: 0.5rem 0;
+  width: 2rem;
 `;
 
 const Badge = styled.span`

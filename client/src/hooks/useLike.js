@@ -1,58 +1,30 @@
-import {useReducer} from "react";
-import postService from "../services/postsService";
+// import axios from "axios";
+// import {useMutation, QueryClient, QueryCache} from "react-query";
 
-const initialState = {
-  post: {},
-  loading: false,
-  error: null,
-};
+// const queryCleint = new QueryClient();
 
-const reducer = (state, {type, payload}) => {
-  switch (type) {
-    case "loading":
-      return {
-        ...state,
-        loading: true,
-        error: null,
-      };
-    case "getPost":
-      return {
-        ...state,
-        post: payload,
-        loading: false,
-        error: null,
-      };
-    case "likeDisLike":
-      return {
-        ...state,
-        post: payload,
-        loading: false,
-        error: null,
-      };
-    case "eror":
-      return {
-        ...state,
-        post: {},
-        loading: false,
-        error: payload,
-      };
-    default:
-      return state;
-  }
-};
+// export default function useLike() {
+//   return useMutation(
+//     values =>
+//       axios
+//         .put(`/posts/post/like/${values.author}`, {post_id: values.id})
+//         .then(res => res.data),
+//     {
+//       onSuccess: (data, variables, context) => {
+//         queryCleint.refetchQueries(["posts", variables.id]);
+//         queryCleint.invalidateQueries("posts");
+//       },
 
-export default function useLike() {
-  const [{post, loading, error}, dispatch] = useReducer(reducer, initialState);
-
-  const handleLikeDislike = async post => {
-    dispatch({type: "loading"});
-    try {
-      const {data} = await postService.likePost(post.author, post.id);
-
-      dispatch({type: "likeDisLike", payload: data});
-    } catch (err) {
-      dispatch({type: "error", payload: err.response.data || err.message});
-    }
-  };
-  return {post, loading, error, handleLikeDislike};
-}
+//       onMutate: variables => {
+//         const previousPost = queryCleint.getQueryData(["post", variables.id]);
+//         queryCleint.setQueryData(["post", variables.id], old => ({
+//           ...old,
+//           ...variables,
+//         }));
+//         return () =>
+//           queryCleint.setQueryData(["post", variables.id], previousPost);
+//       },
+//       onError: (error, values, rollback) => rollback(),
+//     },
+//   );
+// }

@@ -1,15 +1,10 @@
 import React, {useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
-import SnackBar from "../common/SnackBar";
-import useSnackState from "../hooks/useSnackState";
-import Spinner from "../common//Spinner";
 import {AuthContext} from "../context/AuthProvider";
 
 export default function Navbar() {
-  const {user, loading, error, getCurrentUser, logout} =
-    useContext(AuthContext);
-  const {open, hnadleClose} = useSnackState();
+  const {user, getCurrentUser, logout} = useContext(AuthContext);
 
   useEffect(() => {
     getCurrentUser();
@@ -55,7 +50,7 @@ export default function Navbar() {
           )}
           {user && (
             <MenuItemDiv>
-              <Link className="nav-link" to="/add-post">
+              <Link className="nav-link" to="/posts/new">
                 Create Post
               </Link>
             </MenuItemDiv>
@@ -69,13 +64,6 @@ export default function Navbar() {
           )}
         </Nav>
       </Header>
-      {loading && <Spinner />}
-      <SnackBar
-        open={open}
-        err={error}
-        severity={error ? "error" : "succecss"}
-        onClose={hnadleClose}
-      />
     </>
   );
 }

@@ -14,21 +14,21 @@ const reducer = (state, {type, payload}) => {
       return {...state, loading: true, error: null};
     case "error":
       return {...state, currentItem: {}, loading: false, error: payload};
-    case "setCurrentPost":
+    case "setCurrentItem":
       return {
         ...state,
         currentItem: payload,
         loading: false,
         error: null,
       };
-    case "likePost":
+    case "likeItem":
       return {
         ...state,
         currentItem: Object.assign(state.currentItem, payload),
         loading: false,
         error: null,
       };
-    case "disLikePost":
+    case "disLikeItem":
       return {
         ...state,
         currentItem: Object.assign(state.currentItem, payload),
@@ -50,37 +50,42 @@ export default function useCurrentItem() {
     try {
       const {data} = await postService.getPostById(post_id);
 
-      dispatch({type: "setCurrentPost", payload: data});
+      dispatch({type: "setCurrentItem", payload: data});
     } catch (err) {
       dispatch({type: "error", payload: err.response.data || err.message});
     }
   };
 
-  const handleLike = async item => {
-    if (auth.getCurrentUser()) {
-      if (item.like_user_id.includes(auth.getCurrentUser().id)) {
-        try {
-          const {data} = await postService.disLikePost(
-            auth.getCurrentUser().id,
-            item.id,
-          );
-          dispatch({type: "disLikePost", payload: data});
-        } catch (err) {
-          dispatch({type: "error", payload: err.response.data || err.message});
-        }
-      } else {
-        try {
-          const {data} = await postService.likePost(
-            auth.getCurrentUser().id,
-            item.id,
-          );
-          dispatch({type: "likePost", payload: data});
-        } catch (err) {
-          dispatch({type: "error", payload: err.response.data || err.message});
-        }
-      }
-    } else dispatch({type: "error", payload: "Please sign in"});
+  const handleUpvote = async item => {
+    try {
+      const {data} = await postService.likePost(
+        auth.getCurrentUser().id,
+        item.id,
+      );
+      dispatch({type: "likeItem", payload: data});
+    } catch (err) {
+      dispatch({type: "error", payload: err.response.data || err.message});
+    }
   };
 
-  return [currentItem, loading, error, getCurrentItem, handleLike];
+  const handleDownvote = async item => {
+    try {
+      const {data} = await postService.disLikePost(
+        auth.getCurrentUser().id,
+        item.id,
+      );
+      dispatch({type: "disLikeItem", payload: data});
+    } catch (err) {
+      dispatch({type: "error", payload: err.response.data || err.message});
+    }
+  };
+
+  return {
+    currentItem,
+    loading,
+    error,
+    getCurrentItem,
+    handleUpvote,
+    handleDownvote,
+  };
 }

@@ -1,20 +1,25 @@
-import {useFormik} from "formik";
-import useSnackState from "./useSnackState";
+import Joi from "joi-browser";
 
-const UseForm = (values, schema, handleSubmit) => {
-  const [open, handleClose, handleOpen] = useSnackState(false);
+const UseForm = (values, schema) => {
+  const validate = () => {
+    const options = {abortEarly: false};
+    const {error} = Joi.validate(values, schema, options);
+    if (!error) return null;
 
-  const formik = useFormik({
-    initialValues: values,
-    validationSchema: schema,
-    onSubmit: values => {
-      handleOpen(true);
+    const errors = {};
+    for (let item of error.details) {
+      errors[item.path] = item.message;
+    }
 
-      handleSubmit(values);
-    },
-  });
+    return errors;
+  };
 
-  return [formik, handleClose, open];
+  const validateProperty = ({name, value}) => {
+    const {error} = Joi.validate({[name]: value}, {[name]: schema[name]});
+    return error ? error.details[0].message : null;
+  };
+
+  return {values, validate, validateProperty};
 };
 
 export default UseForm;

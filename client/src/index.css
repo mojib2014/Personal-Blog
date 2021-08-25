@@ -1,3 +1,47 @@
 :root {
   --nav-height: 56px;
 }
+
+button:disabled {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: normal;
+  opacity: 0.65;
+}
+
+button:disabled:hover {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: default;
+}
+
+.inline-fileinput {
+  border-radius: 50%;
+  position: absolute !important;
+  width: auto !important;
+  bottom: 0;
+  right: 0;
+}
+
+.inline-fileinput input[type="file"] {
+  display: none;
+}
+
+.inline-fileinput label {
+  cursor: pointer !important;
+}
+
+.spinner {
+  animation: spin infinite 5s linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

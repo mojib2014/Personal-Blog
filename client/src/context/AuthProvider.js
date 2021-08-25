@@ -7,7 +7,6 @@ export const AuthContext = createContext();
 
 const initialState = {
   user: null,
-  is_authenticated: false,
   loading: false,
   error: null,
 };
@@ -42,7 +41,6 @@ const AuthProvider = ({children}) => {
   );
 
   const logout = useCallback(async () => {
-    console.log("AuthProvider logout called");
     dispatch(actions.loading());
     try {
       auth.logout();
@@ -67,7 +65,6 @@ const AuthProvider = ({children}) => {
         user: state.user,
         loading: state.loading,
         error: state.error,
-        is_authenticated: state.is_authenticated,
         login,
         register,
         logout,

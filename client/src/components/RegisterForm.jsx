@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
+import React, {useState, useContext} from "react";
 import styled from "styled-components";
-import * as Yup from "yup";
+import Joi from "joi-browser";
 import {FaUser, FaLock} from "react-icons/fa";
 import {VscLoading} from "react-icons/vsc";
 
@@ -8,91 +8,109 @@ import PrimaryButton from "../common/PrimaryButton";
 import Form from "../common/Form";
 import Input from "../common/Input";
 import {AuthContext} from "../context/AuthProvider";
-import SnackBar from "../common/SnackBar";
 import UseForm from "../hooks/useForm";
 import ErrorBoundary from "./ErrorBoundary";
 import Layout from "../Layout/Layout";
 
 const RegisterForm = () => {
-  const {loading, error, register, getCurrentUser} = useContext(AuthContext);
-
-  const initialValues = {
+  const {loading, register, getCurrentUser} = useContext(AuthContext);
+  const [errors, setErrors] = useState({});
+  const [data, setData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     password: "",
-  };
-
-  const schema = Yup.object().shape({
-    first_name: Yup.string().min(4).max(20).required().label("First Name"),
-    last_name: Yup.string().min(4).max(20).required().label("Last Name"),
-    email: Yup.string().email().required().label("Email"),
-    password: Yup.string().min(6).required().label("password"),
   });
 
-  const handleSubmit = async values => {
+  const schema = {
+    first_name: Joi.string().min(4).max(20).required().label("First Name"),
+    last_name: Joi.string().min(4).max(20).required().label("Last Name"),
+    email: Joi.string().email().required().label("Email"),
+    password: Joi.string().min(6).required().label("password"),
+  };
+
+  const {values, validate, validateProperty} = UseForm(data, schema);
+
+  const handleChange = ({target}) => {
+    const err = {};
+    const errorMessage = validateProperty(target);
+
+    if (errorMessage) err[target.name] = errorMessage;
+    else delete err[target.name];
+
+    const newData = {...data};
+    newData[target.name] = target.value;
+
+    setData(newData);
+    setErrors(err);
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    const errors = validate();
+
+    setErrors(errors);
+    if (errors) return;
+
     await register(values);
 
     if (getCurrentUser()) window.location = "/";
   };
 
-  const [formik, handleClose, open] = UseForm(
-    initialValues,
-    schema,
-    handleSubmit,
-  );
-
   return (
     <ErrorBoundary>
       <Layout>
         <Title>Register Form</Title>
-        <Form onSubmit={formik.handleSubmit}>
+        <Form>
           <Input
+            id="first_name"
             name="first_name"
             type="first_name"
             label="First Name"
-            id="first_name"
-            formik={formik}
+            data={data}
             icon={<FaUser />}
+            onChange={handleChange}
+            errors={errors}
             placeholder="First Name"
           />
           <Input
+            id="last_name"
             name="last_name"
             type="last_name"
             label="Last Name"
-            id="last_name"
-            formik={formik}
+            data={data}
             icon={<FaUser />}
+            onChange={handleChange}
+            errors={errors}
             placeholder="Last Name"
           />
           <Input
+            id="email"
             name="email"
             type="email"
             label="Email"
-            id="email"
-            formik={formik}
             icon="@"
-            placeholder="Email"
+            data={data}
+            onChange={handleChange}
+            errors={errors}
+            placeholder="example@email.com"
           />
           <Input
             name="password"
             type="password"
             label="Password"
             id="password"
-            formik={formik}
+            data={data}
             icon={<FaLock />}
+            onChange={handleChange}
+            errors={errors}
             placeholder="Password"
           />
-          <PrimaryButton>
-            {loading ? <VscLoading color="secondary" size={25} /> : "Register"}
+          <PrimaryButton onClick={handleSubmit}>
+            {loading ? <VscLoading size={25} /> : "Register"}
           </PrimaryButton>
         </Form>
-        <SnackBar
-          err={error}
-          severity={error ? "error" : "success"}
-          onClose={handleClose}
-          open={open}
-        />
       </Layout>
     </ErrorBoundary>
   );

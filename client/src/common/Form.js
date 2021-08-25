@@ -1,8 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function Form({onSubmit, children}) {
-  return <FormCompo onSubmit={onSubmit}>{children}</FormCompo>;
+export default function Form({onSubmit, children, ...rest}) {
+  return (
+    <FormCompo {...rest} onSubmit={onSubmit}>
+      {children}
+    </FormCompo>
+  );
 }
 
 const FormCompo = styled.form`
