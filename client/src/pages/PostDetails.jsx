@@ -1,99 +1,106 @@
-import React, {useState, useEffect, useContext} from "react";
-import { useParams, useHistory, Link } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import MDEditor from "@uiw/react-md-editor";
-
 import Layout from "../Layout/Layout";
-// import Alert from "../common/Alert";
-// import Spinner from "../common/Spinner";
+import Spinner from "../common/Spinner";
 import Like from "../common/Like";
-import {AuthContext} from "../context/AuthProvider";
 import ErrorBoundary from "../components/ErrorBoundary";
-import postService from "../services/postsService";
-import useDeletePost from "../hooks/useDeletePost";
-import userService from "../services/usersService";
+import Comments from "../components/Comments";
+import { AuthContext } from "../context/AuthProvider";
+import usePost from "../hooks/usePost.js";
+import useAuthor from "../hooks/useAuthor";
+import useComments from "../hooks/useComments";
 
-const PostDetails = () => {
-  const { id } = useParams();
-  const {push} = useHistory();
+const PostDetails = ({ location }) => {
   const { user } = useContext(AuthContext);
-  const [post, setPost] = useState({});
-  const [author, setAuthor] = useState({});
-  const { mutate: deletePost } = useDeletePost();
-  
+  const { post_id } = useParams();
+  // post
+  const { post, loading, error, getPost, deletePost, likePost, disLikePost } =
+    usePost();
+
   useEffect(() => {
-    getPost(id);
-  }, [id]);
-  
+    getPost(post_id);
+  }, [getPost, post_id]);
+
+  // author
+  const { author, getAuthor } = useAuthor();
+
   useEffect(() => {
-    getAuthor(post.id);
-  }, [post.id]);
-  
-  const getPost = async (id) => {
-    const { data } = await postService.getPostById(id);
-    setPost(data);
-  }
+    if (post) getAuthor(post.author);
+  }, [getAuthor, post]);
 
-  const getAuthor = async author_id => {
-    const { data } = await userService.getUserById(author_id);
-    setAuthor(data);
-  } 
-  
-  const handleUpvote = async (post) => {
-    if(user && !post.like_user_id.includes(user.id)) {
-      const { data } = await postService.likePost(user.id, post.id);
-      setPost(data);
-    }
-    if(!user) push("/login");
-  }
+  // post comments
+  const {
+    loading: commentsLoading,
+    error: commentsError,
+    comments,
+    getComments,
+  } = useComments();
 
-  const handleDownvote = async post => {
-    if(user && post.like_user_id.includes(user.id)) {
-      const { data } = await postService.disLikePost(user.id, post.id);
-      setPost(data);
-    }
-    if(!user) push("/login");
-  }
+  useEffect(() => {
+    getComments(post_id);
+  }, [getComments, post_id]);
 
-  // if (loading) return <Spinner />;
+  // delete post
+  const handleDeletePost = (post_id) => {
+    deletePost(post_id);
+    if (!error) window.location = "/";
+  };
 
-  // if (error)
-  //   return <Alert errMessage={error} severity={error ? "error" : null} />;
   return (
-    <>
-      {post && (
-        <ErrorBoundary>
-          <Layout>
-            <TitleContainer>
-              <Title>{post.title}</Title>
-              <Subtitle>{post.sub_title}</Subtitle>
-            </TitleContainer>
-            <Like
-              item={post}
-              onUpvote={handleUpvote}
-              onDownvote={handleDownvote}
-            />
-            {(user && user.id === author.id) && (
-            <Button>
-              <Link to={`/posts/${post.id}`}>Edit</Link>
-            </Button>
-          )}
-          {(user && user.id === author.id) && (
-            <Button onClick={() => deletePost(post.id)}>
-            Delete
-            </Button>
-          )}
+    <ErrorBoundary>
+      <Layout>
+        {loading ? (
+          <Spinner />
+        ) : error ? (
+          <div>{error}</div>
+        ) : (
+          <>
+            {post && (
+              <TitleContainer>
+                <Title>{post.title}</Title>
+                <Subtitle>{post.sub_title}</Subtitle>
+              </TitleContainer>
+            )}
+            {post && (
+              <Like
+                item={post}
+                user={user}
+                onLike={likePost}
+                onDisLike={disLikePost}
+                error={error}
+                location={location}
+              />
+            )}
+            {user && user.user_id === author.user_id && (
+              <Button>
+                <Link to={`/posts/post/${post.post_id}`}>Edit</Link>
+              </Button>
+            )}
+            {user && user.user_id === author.user_id && (
+              <Button onClick={() => handleDeletePost(post.post_id)}>
+                Delete
+              </Button>
+            )}
             <Container>
-              <MDEditor.Markdown source={post.body} />
+              {post && <MDEditor.Markdown source={post.body} />}
             </Container>
-          </Layout>
-        </ErrorBoundary>
-      )}
-    </>
+          </>
+        )}
+        {commentsLoading ? (
+          <div>Loading...</div>
+        ) : commentsError ? (
+          <div>{commentsError}</div>
+        ) : (
+          <Comments comments={comments} />
+        )}
+      </Layout>
+    </ErrorBoundary>
   );
 };
 
-export default React.memo(PostDetails);
+export default PostDetails;
 
 const TitleContainer = styled.div`
   width: 100%;

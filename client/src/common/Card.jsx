@@ -1,29 +1,32 @@
 import PropTypes from "prop-types";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { MdShare } from "react-icons/md";
 import styled from "styled-components";
-import {MdShare} from "react-icons/md";
 import getReadingTime from "../utils/getReadingTime";
 import Cardheader from "./CardHeader";
 import formatSlug from "../utils/formatSlug";
 import useAuthor from "../hooks/useAuthor";
+import { useEffect } from "react";
 
-const Card = ({item}) => {
-  const {data: author, isLoading} = useAuthor(item.author);
+const Card = ({ item }) => {
+  const { author, getAuthor } = useAuthor();
+
+  useEffect(() => {
+    if (item) getAuthor(item.author);
+  }, [getAuthor, item]);
 
   return (
     <Container>
-      {author && (
-        <Cardheader author={author} />
-      )}
+      <Cardheader author={author} />
       <CardTitleContainer>
         <Title>{item.title}</Title>
       </CardTitleContainer>
       <CardMedia>
-        <Image src={item.cover_image} title={item.title} />
+        <Link to={`/post-details/${formatSlug(item.title)}/${item.post_id}`}>
+          <Image src={item.cover_image} title={item.title} alt={item.title} />
+        </Link>
       </CardMedia>
-      <CardContent>
-        <CardSubtitle>{item.sub_title}</CardSubtitle>
-      </CardContent>
+      <CardSubtitle>{item.sub_title}</CardSubtitle>
       <CardActions className="card-actions">
         <CardAction>
           <CardSubtitle>
@@ -42,7 +45,7 @@ const Card = ({item}) => {
         </CardAction>
         <CardAction>
           <Link
-            to={`/post-details/${formatSlug(item.title)}/${item.id}`}
+            to={`/post-details/${formatSlug(item.title)}/${item.post_id}`}
             title="Read Topic"
           >
             <Button>Read</Button>
@@ -63,15 +66,13 @@ Card.propTypes = {
 };
 
 const Container = styled.div`
-  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
-    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-  border-radius: 5px;
-  background-color: #ffffff;
-  color: rgba(0, 0, 0, 0.87);
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  font-size: 1rem;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   -moz-flex-direction: column;
@@ -82,62 +83,46 @@ const Container = styled.div`
   justify-content: space-evenly;
   with: 100%;
   height: 100%;
-  flex-grow: 0;
-  padding: 8px;
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  padding: 1rem;
 `;
 
 const CardTitleContainer = styled.div`
   display: flex;
   width: 100%;
   flex-basis: 100%;
+  padding: 1rem 0;
 `;
 
-const Title = styled.h2`
-  color: rgba(0, 0, 0, 0.83);
-  font-weight: 400;
-  line-height: 1.335;
-  letter-spacing: 0em;
-`;
+const Title = styled.h3``;
 
 const CardMedia = styled.div`
-  background-color: #ddd;
-  background-size: cover;
-  display: block;
-  min-width: 100%;
+  width: 100%;
 `;
 
 const Image = styled.img`
-  background-color: #ddd;
+  background-color: var(--bg-color);
+  cursor: pointer;
   display: block;
   min-width: 100%;
   width: 100%;
   min-height: 181.328px;
   height: auto;
-  max-height: 250px;
   object-fit: cover;
 `;
 
-const CardContent = styled.div`
-  padding: 1rem 0;
-`;
-
-const CardSubtitle = styled.small`
-  color: rgba(0, 0, 0, 0.54);
+const CardSubtitle = styled.p`
+  color: var(--dark-gray);
   display: block;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  line-height: 1.43;
-  letter-spacing: 0.01071em;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 1rem 0;
 `;
 
 const CardActions = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
 `;
 
 const CardAction = styled.div`

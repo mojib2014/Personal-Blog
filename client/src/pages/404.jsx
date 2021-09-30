@@ -1,5 +1,5 @@
 import React from "react";
-import {UnsubscribeIllustration} from "../components/Illustrations";
+import { UnsubscribeIllustration } from "../components/Illustrations";
 
 function NOTFOUND() {
   return (

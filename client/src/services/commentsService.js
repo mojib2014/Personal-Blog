@@ -1,11 +1,6 @@
 import http from "./httpService";
 
-export const createPostComment = async (
-  comment,
-  user_id,
-  username,
-  post_id,
-) => {
+const createPostComment = async (comment, user_id, username, post_id) => {
   try {
     return await http.post("/comments/create", {
       comment,
@@ -15,10 +10,11 @@ export const createPostComment = async (
     });
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
-export const updatePostComment = async (
+const updatePostComment = async (
   comment,
   user_id,
   post_id,
@@ -35,10 +31,11 @@ export const updatePostComment = async (
     });
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
-export const deletePostComment = async (comment_id) => {
+const deletePostComment = async (comment_id) => {
   try {
     return await http.delete("/comments/delete", { comment_id });
   } catch (err) {
@@ -46,10 +43,20 @@ export const deletePostComment = async (comment_id) => {
   }
 };
 
-export const getPostComments = async (post_id) => {
+const getPostComments = async (post_id) => {
   try {
-    return await http.get("/comments/post-comments", { params: post_id });
+    return await http.get(`/comments/post/comments/${post_id}`);
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
+
+const commentsService = {
+  createPostComment,
+  updatePostComment,
+  deletePostComment,
+  getPostComments,
+};
+
+export default commentsService;

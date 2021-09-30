@@ -1,15 +1,6 @@
-import React from "react";
 import styled from "styled-components";
 
-export default function PrimaryButton({onClick, type, children}) {
-  return (
-    <Button type={type} onClick={onClick}>
-      {children}
-    </Button>
-  );
-}
-
-const Button = styled.button`
+export const PrimaryButton = styled.button`
   align-items: center;
   border: 1px solid #3f51b5;
   border-radius: 4px;

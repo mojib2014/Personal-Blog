@@ -1,0 +1,8 @@
+{
+  "dbUrl": "db_url",
+  "port": "PORT",
+  "sessionSecret": "session_secret",
+  "googleConsumerKey": "google_consumerKey",
+  "googleConsumerSecret": "google_consumerSecret",
+  "jwtPrivateKey": "blog_jwtPrivateKey"
+}

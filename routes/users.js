@@ -1,13 +1,14 @@
-const fs = require("fs");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const auth = require("../middlewares/auth");
+const removeProfileImage = require("../middlewares/removeProfileImage");
+const moveProfileImage = require("../middlewares/moveProfileImage");
 
-router.get("/user/:id", async (req, res, next) => {
+router.get("/user/:user_id", async (req, res, next) => {
+  const { user_id } = req.params;
   try {
-    const { id } = req.params;
-
-    const user = await User.getUserById(id);
+    const user = await User.getUserById(user_id);
 
     if (!user)
       return res.status(404).send("A User with the given ID was not found!");
@@ -41,44 +42,26 @@ router.get("/user/posts/:user_id", async (req, res, next) => {
   }
 });
 
-router.put("/user/", async (req, res, next) => {
-  const data = JSON.parse(req.body.user);
-  delete data.iat;
+router.put(
+  "/user/:user_id",
+  [auth, removeProfileImage, moveProfileImage],
+  async (req, res, next) => {
+    const data = req.body;
+    const { user_id } = req.params;
+    delete data.iat;
+    delete data.user_id;
+    try {
+      const user = await User.getUserById(user_id);
+      if (!user)
+        return res.status(404).send("User with the given ID was not found!");
 
-  let file;
-  if (req.files) file = req.files.image;
-  try {
-    const user = await User.getUserById(data.id);
-    if (!user)
-      return res.status(404).send("User with the given ID was not found!");
+      const updated = await User.updateUser(user.user_id, data);
 
-    if (user.profile_image && req.files) {
-      const filePath = `${process.cwd()}/client/public${user.profile_image}`;
-
-      if (filePath) {
-        fs.unlink(filePath, (err) => console.log("removing file error: ", err));
-      }
-      file.mv(`${process.cwd()}/client/public/profile/${file.name}`, (err) => {
-        if (err) throw err;
-      });
-
-      data.profile_image = `/profile/${file.name}`;
+      res.send(updated);
+    } catch (err) {
+      next(err);
     }
-
-    if (!user.profile_image) {
-      file.mv(`${process.cwd()}/client/public/profile/${file.name}`, (err) => {
-        if (err) throw err;
-      });
-
-      data.profile_image = `/profile/${file.name}`;
-    }
-
-    const updated = await User.updateUser(data.id, data);
-
-    res.send(updated);
-  } catch (err) {
-    next(err);
-  }
-});
+  },
+);
 
 module.exports = router;

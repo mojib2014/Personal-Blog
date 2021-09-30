@@ -1,70 +1,65 @@
-import {createContext, useCallback, useReducer} from "react";
+import { createContext, useCallback, useEffect, useReducer } from "react";
 import auth from "../services/authService";
-import reducer from "./reducer";
-import actions from "./actions";
 
 export const AuthContext = createContext();
 
-const initialState = {
-  user: null,
-  loading: false,
-  error: null,
-};
+const AuthProvider = ({ children }) => {
+  const [state, setState] = useReducer((_, action) => action, {
+    loading: true,
+  });
 
-const AuthProvider = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const register = async (email, password) => {
-    dispatch(actions.loading());
+  const register = useCallback(async (email, password) => {
     try {
-      const {data: token} = await auth.registerUser(email, password);
-      auth.loginWithJwt(token);
-      await getCurrentUser();
-      dispatch(actions.register(state.user));
+      const { data: token } = await auth.registerUser(email, password);
+      if (token) {
+        auth.loginWithJwt(token);
+        const user = await auth.getCurrentUser();
+        setState({ user, loading: false });
+      }
     } catch (err) {
-      dispatch(actions.error(err.response.data || err.message));
+      setState({ error: err.response.data || err.message, loading: false });
     }
-  };
+  }, []);
+
+  const getCurrentUser = useCallback(async () => {
+    try {
+      const user = await auth.getCurrentUser();
+      setState({ user, loading: false });
+    } catch (err) {
+      setState({ error: err.response.data || err.message, loading: false });
+    }
+  }, []);
 
   const login = useCallback(
-    async (email, password) => {
-      dispatch(actions.loading());
+    async ({ email, password }) => {
       try {
         await auth.login(email, password);
-        await getCurrentUser();
-        dispatch(actions.login(state.user));
+        const user = await getCurrentUser();
+        setState({ user, loading: false });
       } catch (err) {
-        dispatch(actions.error(err.response.data || err.message));
+        setState({ error: err.response.data || err.message, loading: false });
       }
     },
-    [state.user],
+    [getCurrentUser],
   );
 
   const logout = useCallback(async () => {
-    dispatch(actions.loading());
     try {
       auth.logout();
-      dispatch(actions.logout());
+      setState({ user: null, loading: false });
     } catch (err) {
-      dispatch(actions.error(err.response.data || err.message));
+      setState({ error: err.response.data || err.message, loading: false });
     }
-  }, [dispatch]);
+  }, []);
 
-  const getCurrentUser = async () => {
-    dispatch(actions.loading());
-    try {
-      const user = await auth.getCurrentUser();
-      dispatch(actions.getCurrentUser(user));
-    } catch (err) {
-      dispatch(actions.error(err.response.data || err.message));
-    }
-  };
+  useEffect(() => {
+    getCurrentUser();
+  }, [getCurrentUser]);
+
   return (
     <AuthContext.Provider
       value={{
-        user: state.user,
-        loading: state.loading,
-        error: state.error,
+        ...state,
         login,
         register,
         logout,

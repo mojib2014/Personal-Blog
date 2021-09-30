@@ -1,21 +1,23 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 import Joi from "joi-browser";
-import {FaLock, FaMailBulk} from "react-icons/fa";
-import {VscLoading} from "react-icons/vsc";
-import {Redirect} from "react-router-dom";
+import { FaLock, FaMailBulk } from "react-icons/fa";
+import { VscLoading } from "react-icons/vsc";
 
 import Form from "../common/Form";
 import UseForm from "../hooks/useForm";
 import Input from "../common/Input";
-import PrimaryButton from "../common/PrimaryButton";
+import { PrimaryButton } from "../common/PrimaryButton";
 import ErrorBoundary from "./ErrorBoundary";
 import Layout from "../Layout/Layout";
 import Title from "../common/Title";
-import {AuthContext} from "../context/AuthProvider";
+import GoogleBtn from "../common/GoogleBtn";
+import FacebookBtn from "../common/FacebookBtn";
+import Error from "../common/Error";
+import { AuthContext } from "../context/AuthProvider";
 
-const LoginForm = ({location}) => {
-  const {user, loading, login} = useContext(AuthContext);
-  const [data, setData] = useState({email: "", password: ""});
+const LoginForm = ({ location }) => {
+  const { user, login, error, loading } = useContext(AuthContext);
+  const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
   const schema = {
@@ -23,22 +25,22 @@ const LoginForm = ({location}) => {
     password: Joi.string().min(6).max(20).required().label("password"),
   };
 
-  const {values, validate, validateProperty} = UseForm(data, schema);
+  const { values, validate, validateProperty } = UseForm(data, schema);
 
-  const handleChange = ({target}) => {
+  const handleChange = ({ target }) => {
     const err = {};
     const errorMessage = validateProperty(target);
     if (errorMessage) err[target.name] = errorMessage;
     else delete err[target.name];
 
-    const newData = {...data};
+    const newData = { ...data };
     newData[target.name] = target.value;
 
     setData(newData);
     setErrors(err);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate();
 
@@ -46,22 +48,22 @@ const LoginForm = ({location}) => {
 
     if (errors) return;
 
-    try {
-      await login(values.email, values.password);
-      const {state} = location;
-      window.location = state ? state.from.pathname : "/";
-    } catch (ex) {
-      console.log("login form handleSubmit: ", ex);
-    }
+    login(values);
+
+    setData({ email: "", password: "" });
   };
-
-  if (user) return <Redirect to="/" />;
-
+  if (user) {
+    const { state } = location;
+    window.location = state ? state.from.pathname : "/";
+  }
   return (
     <ErrorBoundary>
       <Layout>
         <Title>Login Form</Title>
         <Form>
+          <GoogleBtn />
+          <FacebookBtn />
+          {error && <Error error={error} />}
           <Input
             id="email"
             name="email"

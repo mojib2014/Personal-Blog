@@ -1,19 +1,19 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import Joi from "joi-browser";
-import {FaUser, FaLock} from "react-icons/fa";
-import {VscLoading} from "react-icons/vsc";
-
-import PrimaryButton from "../common/PrimaryButton";
+import { FaUser, FaLock } from "react-icons/fa";
+import { VscLoading } from "react-icons/vsc";
+import { PrimaryButton } from "../common/PrimaryButton";
 import Form from "../common/Form";
 import Input from "../common/Input";
-import {AuthContext} from "../context/AuthProvider";
 import UseForm from "../hooks/useForm";
 import ErrorBoundary from "./ErrorBoundary";
 import Layout from "../Layout/Layout";
+import Error from "../common/Error";
+import { AuthContext } from "../context/AuthProvider";
 
 const RegisterForm = () => {
-  const {loading, register, getCurrentUser} = useContext(AuthContext);
+  const { register, user, error, loading } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const [data, setData] = useState({
     first_name: "",
@@ -29,23 +29,23 @@ const RegisterForm = () => {
     password: Joi.string().min(6).required().label("password"),
   };
 
-  const {values, validate, validateProperty} = UseForm(data, schema);
+  const { values, validate, validateProperty } = UseForm(data, schema);
 
-  const handleChange = ({target}) => {
-    const err = {};
+  const handleChange = ({ target }) => {
+    const errs = {};
     const errorMessage = validateProperty(target);
 
-    if (errorMessage) err[target.name] = errorMessage;
-    else delete err[target.name];
+    if (errorMessage) errs[target.name] = errorMessage;
+    else delete errs[target.name];
 
-    const newData = {...data};
+    const newData = { ...data };
     newData[target.name] = target.value;
 
     setData(newData);
-    setErrors(err);
+    setErrors(errs);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const errors = validate();
@@ -53,16 +53,23 @@ const RegisterForm = () => {
     setErrors(errors);
     if (errors) return;
 
-    await register(values);
+    register(values);
 
-    if (getCurrentUser()) window.location = "/";
+    setData({
+      first_name: "",
+      last_name: "",
+      email: "",
+      password: "",
+    });
   };
 
+  if (user) window.location = "/";
   return (
     <ErrorBoundary>
       <Layout>
         <Title>Register Form</Title>
         <Form>
+          {error && <Error error={error} />}
           <Input
             id="first_name"
             name="first_name"

@@ -40,11 +40,14 @@ router.delete("/delete/:id", async (req, res, next) => {
   }
 });
 
-router.get("/post-comments/:id", async (req, res, next) => {
+router.get("/post/comments/:post_id", async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { post_id } = req.params;
 
-    const comments = await Comment.getPostComments(id);
+    const comments = await Comment.getPostComments(post_id);
+
+    if (!comments)
+      return res.status(404).send("This post has no comments yet!");
 
     res.send(comments);
   } catch (err) {

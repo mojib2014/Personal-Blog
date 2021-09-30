@@ -8,7 +8,7 @@ const getAllPosts = async () => {
   }
 };
 
-const getPostById = async post_id => {
+const getPostById = async (post_id) => {
   try {
     return await http.get(`/posts/post/${post_id}`);
   } catch (err) {
@@ -16,33 +16,35 @@ const getPostById = async post_id => {
   }
 };
 
-const getAuthorPosts = async author_id => {
+const getAuthorPosts = async (author_id) => {
   try {
     return await http.get(`/posts/author/posts/${author_id}`);
   } catch (err) {
     throw err;
-  } 
+  }
 };
 
-const savePost = async formData => {
+const savePost = async (formData) => {
   try {
     const item = JSON.parse(formData.get("item"));
-    if (item.id) {
-      return http.put("/posts/post/update", formData);
+    if (item.post_id) {
+      return http.put("/posts/post/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      return http.post("/posts/new", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     }
-
-    return http.post("/posts/new", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
   } catch (err) {
     console.log("errorr postservice", err);
     throw err;
   }
 };
 
-const updatePostById = async post => {
+const updatePostById = async (post) => {
   try {
     return await http.put("/posts/post/update", post);
   } catch (err) {
@@ -50,7 +52,7 @@ const updatePostById = async post => {
   }
 };
 
-const deletePostComments = async post_id => {
+const deletePostComments = async (post_id) => {
   try {
     return await http.delete("/posts/post/comments/delete", {
       params: post_id,
@@ -60,9 +62,9 @@ const deletePostComments = async post_id => {
   }
 };
 
-const deletePost = async post_id => {
+const deletePost = async (post_id) => {
   try {
-    return await http.delete("/posts/post/delete", {params: post_id});
+    return await http.delete(`/posts/post/${post_id}`);
   } catch (err) {
     throw err;
   }
@@ -70,7 +72,7 @@ const deletePost = async post_id => {
 
 const likePost = async (user_id, post_id) => {
   try {
-    return await http.put(`/posts/post/like/${user_id}`, {post_id});
+    return await http.put(`/posts/post/like/${user_id}`, { post_id });
   } catch (err) {
     throw err;
   }
@@ -78,7 +80,7 @@ const likePost = async (user_id, post_id) => {
 
 const disLikePost = async (user_id, post_id) => {
   try {
-    return await http.put(`/posts/post/dislike/${user_id}`, {post_id});
+    return await http.put(`/posts/post/dislike/${user_id}`, { post_id });
   } catch (err) {
     throw err;
   }

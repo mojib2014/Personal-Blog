@@ -1,4 +1,9 @@
 {
-  "db": "db_url",
-  "jwtPrivateKey": "unsecureKey"
+  "dbUrl": "db_url",
+  "port": "PORT",
+  "sessionSecret": "session_secret",
+  "googleConsumerKey": "google_consumerKey",
+  "googleConsumerSecret": "google_consumerSecret",
+  "jwtPrivateKey": "unsecureKey",
+  "requiresAuth": true
 }

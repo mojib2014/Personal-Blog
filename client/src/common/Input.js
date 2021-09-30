@@ -26,21 +26,18 @@ export default function Input({
         value={data[name]}
         onChange={onChange}
       />
-      <Container>{errors[name]}</Container>
+      {errors && <Container>{errors[name]}</Container>}
     </InputGroup>
   );
 }
 
 Input.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   type: PropTypes.string,
-  label: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
-  icon: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.object.isRequired,
-  ]),
+  label: PropTypes.string,
+  onChange: PropTypes.func,
+  errors: PropTypes.object,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   rest: PropTypes.object,
 };
 

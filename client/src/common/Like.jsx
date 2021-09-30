@@ -1,67 +1,58 @@
 import PropTypes from "prop-types";
-import {FaArrowUp, FaArrowDown} from "react-icons/fa";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import styled from "styled-components";
 import ErrorBoundary from "../components/ErrorBoundary";
 
-export default function Like({item, onUpvote, onDownvote}) {
+export default function Like({ item, user, onLike, onDisLike, error }) {
+  const handleLike = (post_id) => {
+    if (item.like_user_id.includes(user.user_id)) return;
+    if (!user) window.location = "/login";
+    onLike(user.user_id, post_id);
+  };
+
+  const handleDislike = (post_id) => {
+    if (!item.like_user_id.includes(user.user_id)) return;
+    if (!user) window.location = "/login";
+    onDisLike(user.user_id, post_id);
+  };
   return (
     <ErrorBoundary>
+      {error && <div>{error}</div>}
       <Container>
         <FaArrowUp
           aria-label="Upvote"
           title="Upvote"
-          style={{cursor: "pointer"}}
-          onClick={() => onUpvote(item)}
+          style={{ cursor: "pointer" }}
+          onClick={() => handleLike(item.post_id)}
         />
         <Badge>{item.likes}</Badge>
+        <FaArrowDown
+          aria-label="Downvote"
+          title="Downvote"
+          style={{ cursor: "pointer" }}
+          onClick={() => handleDislike(item.post_id)}
+        />
       </Container>
-      <FaArrowDown
-        aria-label="Downvote"
-        title="Downvote"
-        style={{cursor: "pointer"}}
-        onClick={() => onDownvote(item)}
-      />
     </ErrorBoundary>
   );
 }
 
 Like.propTypes = {
   item: PropTypes.object.isRequired,
-  onUpvote: PropTypes.func.isRequired,
-  onDownvote: PropTypes.func.isRequired,
+  onLike: PropTypes.func.isRequired,
+  onDisLike: PropTypes.func.isRequired,
+  user: PropTypes.object,
 };
 
 const Container = styled.div`
-  position: relative;
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
   vertical-align: middle;
   margin: 0.5rem 0;
   width: 2rem;
 `;
 
 const Badge = styled.span`
-  color: #fff;
-  background-color: #2979ff;
-  height: 20px;
-  display: flex;
-  padding: 0 6px;
-  z-index: 1;
-  position: absolute;
-  flex-wrap: wrap;
-  font-size: 0.75rem;
-  min-width: 20px;
-  box-sizing: border-box;
-  transition: transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  align-items: center;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 500;
-  line-height: 1;
-  align-content: center;
-  border-radius: 10px;
-  flex-direction: row;
-  justify-content: center;
-  top: -4px;
-  right: 0;
-  transform: scale(1) translate(50%, -50%);
-  transform-origin: 100% 0%;
+  padding: 0.5rem 0;
 `;

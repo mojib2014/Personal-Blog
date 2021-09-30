@@ -1,8 +1,26 @@
-import axios from "axios";
-import {useQuery} from "react-query";
+import { useState, useCallback } from "react";
+import userService from "../services/usersService";
 
-export default function useAuthor(author_id) {
-  return useQuery(author_id && ["author_id", author_id], () =>
-    axios.get(`/users/user/${author_id}`).then(res => res.data),
-  );
+export default function useAuthor() {
+  const [author, setAuthor] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getAuthor = useCallback(async (author_id) => {
+    try {
+      const { data: author } = await userService.getUserById(author_id);
+      setAuthor(author);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      setError({ error: err.reponse.data || err.message });
+    }
+  }, []);
+
+  return {
+    loading,
+    error,
+    author,
+    getAuthor,
+  };
 }

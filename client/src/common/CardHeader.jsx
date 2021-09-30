@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import formatDate from "../utils/formatDate";
 
-const Cardheader = ({author}) => {
+const Cardheader = ({ author }) => {
   return (
     <>
       {author && (
         <HeaderContainer>
           <Link
-            to={`/author/profile/${author.last_name}/${author.id}`}
-            style={{textDecoration: "none"}}
+            to={`/author/profile/${author.user_id}`}
+            style={{ textDecoration: "none" }}
             title="Go to author's profile"
           >
             <Avatar aria-label="Author Profile">
@@ -21,8 +21,8 @@ const Cardheader = ({author}) => {
             </Avatar>
           </Link>
           <Link
-            to={`/author/profile/${author.last_name}/${author.id}`}
-            style={{textDecoration: "none"}}
+            to={`/author/profile/${author.user_id}`}
+            style={{ textDecoration: "none" }}
             title="Go to author's profile"
           >
             <HeaderContent>
@@ -51,7 +51,6 @@ const HeaderContainer = styled.div`
   flex-wrap: wrap;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  padding: 0.5rem 0;
 `;
 
 const Avatar = styled.div`
@@ -75,9 +74,7 @@ const AvatarCircle = styled.div`
   justify-content: center;
   overflow: hidden;
   position: relative;
-  font-size: 1.25rem;
   flex-shrink: 0;
-  line-height: 1;
   border-radius: 50%;
   user-select: none;
   justify-content: center;
@@ -89,21 +86,10 @@ const HeaderContent = styled.div`
 
 const HeaderTitle = styled.span`
   display: block;
-  font-size: 0.875rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  line-height: 1.43;
-  letter-spacing: 0.02071em;
 `;
 
 const HeaderSubtitle = styled.span`
   display: block;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 0.875rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  line-height: 1.43;
-  letter-spacing: 0.01071em;
+  color: var(--secondary-text-color);
+  line-height: 1.1;
 `;
-
-

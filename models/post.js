@@ -1,6 +1,6 @@
 const pgp = require("pg-promise")({ capSQL: true });
-const db = require("../db");
 const moment = require("moment");
+const db = require("../db");
 
 module.exports = class Post {
   constructor(data = {}) {
@@ -12,7 +12,8 @@ module.exports = class Post {
     this.like_user_id = data.like_user_id || [];
     this.likes = data.likes || 0;
     this.author = data.author;
-    this.cover_image = data.cover_image;
+    this.cover_image = data.cover_image || "";
+    this.tag_id = data.tag_id;
   }
 
   /**
@@ -35,16 +36,21 @@ module.exports = class Post {
 
   /**
    * Updates a post record
-   * @param {Number} id [Post id to update]
+   * @param {Number} post_id [Post post_id to update]
    * @param {Object} post [Updated post]
    * @returns {Object|null} post [updated Post]
    */
-  static async updatePost(id, post) {
+  static async updatePost(post_id, post) {
     try {
       post.modified = moment.utc().toISOString();
-      const condition = pgp.as.format(`WHERE id = ${id} RETURNING *`, { id });
+      const condition = pgp.as.format(
+        `WHERE post_id = ${post_id} RETURNING *`,
+        {
+          post_id,
+        },
+      );
 
-      delete post.id;
+      delete post.post_id;
 
       const statement = pgp.helpers.update(post, null, "posts") + condition;
 
@@ -57,8 +63,8 @@ module.exports = class Post {
 
   /**
    * Updates a posts's likes
-   * @param {String} user_id [User id]
-   * @param {String} post_id [Post id]
+   * @param {String} user_id [User user_id]
+   * @param {String} post_id [Post post_id]
    * @returns {Object|Error} post [Update post]
    */
   static async likePost(user_id, post_id) {
@@ -66,14 +72,13 @@ module.exports = class Post {
       const statement = `UPDATE posts SET
                           like_user_id = like_user_id || $1, likes = likes + 1
                           WHERE NOT (like_user_id @> $1)
-                          AND id = ($2) RETURNING *`;
+                          AND post_id = ($2) RETURNING *`;
       const values = [[user_id], post_id];
 
       const result = await db.query(statement, values);
 
       if (result.rows.length) return result.rows[0];
     } catch (err) {
-      console.log("like: ", err);
       throw err;
     }
   }
@@ -82,27 +87,26 @@ module.exports = class Post {
     try {
       const statement = `UPDATE posts SET like_user_id = array_remove(like_user_id, $1), 
                         likes = likes -1
-                        WHERE id = $2 RETURNING *`;
+                        WHERE post_id = $2 RETURNING *`;
       const values = [user_id, post_id];
 
       const result = await db.query(statement, values);
 
       if (result.rows.length) return result.rows[0];
     } catch (err) {
-      console.log("disLike: ", err);
       throw err;
     }
   }
 
   /**
    * Removes a post
-   * @param {Number} id [Post id]
+   * @param {Number} post_id [Post post_id]
    * @returns {Object|Error} post [Deleted post or error]
    */
-  static async deletePost(id) {
+  static async deletePost(post_id) {
     try {
-      const statement = `DELETE FROM posts WHERE id = $1 RETURNING *`;
-      const values = [id];
+      const statement = `DELETE FROM posts WHERE post_id = $1 RETURNING *`;
+      const values = [post_id];
 
       const result = await db.query(statement, values);
 
@@ -114,7 +118,7 @@ module.exports = class Post {
 
   /**
    * Removes a post's comments by post_id
-   * @param {Number} id [Comments post_id]
+   * @param {Number} post_id [Comments post_id]
    * @returns {Array} comments [Deleted comments]
    */
   static async deletePostComments(post_id) {
@@ -146,6 +150,11 @@ module.exports = class Post {
     }
   }
 
+  /**
+   *
+   * @param {Number} author_id
+   * @returns {Array} Posts [Author posts]
+   */
   static async getAuthorPosts(author_id) {
     try {
       const statement = `SELECT * FROM posts WHERE author = $1`;
@@ -160,13 +169,13 @@ module.exports = class Post {
   }
 
   /**
-   * Retrieves a post record by id
-   * @param {Number} id [Post id]
+   * Retrieves a post record by post_id
+   * @param {Number} post_id [Post post_id]
    */
-  static async getPostById(id) {
+  static async getPostById(post_id) {
     try {
-      const statement = `SELECT * FROM posts WHERE id = $1`;
-      const values = [id];
+      const statement = `SELECT * FROM posts WHERE post_id = $1`;
+      const values = [post_id];
 
       const result = await db.query(statement, values);
 

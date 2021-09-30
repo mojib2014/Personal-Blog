@@ -1,15 +1,10 @@
-import React, {useEffect, useContext} from "react";
-import {Link} from "react-router-dom";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import {AuthContext} from "../context/AuthProvider";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Navbar() {
-  const {user, getCurrentUser, logout} = useContext(AuthContext);
-
-  useEffect(() => {
-    getCurrentUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <>
@@ -17,7 +12,7 @@ export default function Navbar() {
         <Nav>
           <LogoContainer>
             <Link className="nav-link" to="/">
-              Logo
+              Mojib's Blog
             </Link>
           </LogoContainer>
           {!user && (
@@ -36,9 +31,9 @@ export default function Navbar() {
           )}
           {user && (
             <MenuItemDiv>
-              <Link className="nav-link" to="#" onClick={logout}>
+              <a className="nav-link" href="/login" onClick={logout}>
                 Logout
-              </Link>
+              </a>
             </MenuItemDiv>
           )}
           {user && (
@@ -50,14 +45,14 @@ export default function Navbar() {
           )}
           {user && (
             <MenuItemDiv>
-              <Link className="nav-link" to="/posts/new">
+              <Link className="nav-link" to="/posts/post/new">
                 Create Post
               </Link>
             </MenuItemDiv>
           )}
           {user && (
             <MenuItemDiv>
-              <Link className="nav-link" to="/login">
+              <Link className="nav-link" to="/my-account">
                 My Account
               </Link>
             </MenuItemDiv>
@@ -70,7 +65,7 @@ export default function Navbar() {
 
 const Header = styled.header`
   backface-visibility: hidden;
-  background-color: #fff;
+  background-color: var(--bg-color);
   transform: translate3d(0, 0, 0);
   transition: box-shadow 250ms;
   position: relative;
@@ -79,7 +74,7 @@ const Header = styled.header`
   max-height: 56px;
   z-index: 91;
   &.fixed {
-    box-shadow: 0 2px 10px 0 rgb(0 0 0 / 15%);
+    box-shadow: var(--box-shadow);
     position: fixed;
     top: 0;
     left: 0;
@@ -88,7 +83,6 @@ const Header = styled.header`
 
 const Nav = styled.nav`
   align-items: center;
-  background-color: #fff;
   border-bottom: 1px solid transparent;
   display: flex;
   height: 100%;
@@ -102,10 +96,11 @@ const Nav = styled.nav`
 
 const LogoContainer = styled.div`
   margin-right: auto;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 2rem;
 `;
 
 const MenuItemDiv = styled.div`
-  margin-left: 24px;
-  font-size: 1rem;
+  margin-left: 2rem;
+  font-weight: 550;
 `;

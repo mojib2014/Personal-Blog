@@ -3,7 +3,7 @@ import jwtDecode from "jwt-decode";
 
 http.setJWT(getJWT());
 
-const registerUser = async user => {
+const registerUser = async (user) => {
   try {
     return await http.post("/auth/signup", user);
   } catch (err) {
@@ -13,7 +13,7 @@ const registerUser = async user => {
 
 async function login(email, password) {
   try {
-    const {data: jwt} = await http.post("/auth/login", {email, password});
+    const { data: jwt } = await http.post("/auth/login", { email, password });
 
     localStorage.setItem("token", jwt);
   } catch (err) {

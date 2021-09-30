@@ -1,6 +1,14 @@
 import http from "./httpService";
 
-const getUserByEmail = async email => {
+const getUsers = async () => {
+  try {
+    return await http.get(`/users`);
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getUserByEmail = async (email) => {
   try {
     return await http.get(`/users/${email}`);
   } catch (err) {
@@ -8,7 +16,7 @@ const getUserByEmail = async email => {
   }
 };
 
-const getUserPosts = async user_id => {
+const getUserPosts = async (user_id) => {
   try {
     return await http.get(`/users/user/posts/${user_id}`);
   } catch (err) {
@@ -16,7 +24,7 @@ const getUserPosts = async user_id => {
   }
 };
 
-const getUserById = async user_id => {
+const getUserById = async (user_id) => {
   try {
     return await http.get(`/users/user/${user_id}`);
   } catch (err) {
@@ -24,9 +32,9 @@ const getUserById = async user_id => {
   }
 };
 
-const updateUser = async user => {
+const updateUser = async (user_id, formData) => {
   try {
-    return await http.put("/users/user", user);
+    return await http.put(`/users/user/${user_id}`, formData);
   } catch (err) {
     throw err;
   }
@@ -47,13 +55,12 @@ const updateUser = async user => {
 //     throw err;
 //   }
 // };
-const userService = {
+const usersService = {
   getUserByEmail,
   getUserPosts,
   getUserById,
   updateUser,
-  // getUserPostsByUsername,
-  // getUserProfileByUsername,
+  getUsers,
 };
 
-export default userService;
+export default usersService;

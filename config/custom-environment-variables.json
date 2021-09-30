@@ -1,4 +1,10 @@
 {
-  "db": "db_url",
+  "dbUrl": "db_url",
+  "port": "PORT",
+  "sessionSecret": "session_secret",
+  "googleClientId": "google_client_id",
+  "googleClientSecret": "google_client_secret",
+  "facebookAppId": "facebook_app_id",
+  "facebookAppSecret": "facebook_app_secret",
   "jwtPrivateKey": "blog_jwtPrivateKey"
 }

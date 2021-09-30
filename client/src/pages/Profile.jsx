@@ -1,100 +1,105 @@
-import React, {useState} from "react";
-import { useParams } from "react-router";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import {FaCamera} from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 import Layout from "../Layout/Layout";
-import Posts from "../components/Posts";
+import Posts from "../components/posts";
 import Spinner from "../common/Spinner";
 import FileInput from "../common/FileInput";
 import ErrorBoundary from "../components/ErrorBoundary";
-import userService from "../services/usersService";
-import {useContext} from "react";
-import {AuthContext} from "../context/AuthProvider";
+import useUser from "../hooks/useUser";
+import { deletePost } from "../features/post/postSlice";
+import { AuthContext } from "../context/AuthProvider";
 import useAuthorPosts from "../hooks/useAuthorPosts";
-import useAuthor from "../hooks/useAuthor";
-import useDeletePost from "../hooks/useDeletePost";
 
-export default function Profile({match}) {
+export default function Profile() {
+  const { user: currentUser } = useContext(AuthContext);
+  const {
+    loading: userLoading,
+    error: userError,
+    user,
+    getUserById,
+    updateUser,
+  } = useUser();
+  const { loading, error, authorPosts, getAuthorPosts } = useAuthorPosts();
   const [image, setImage] = useState(null);
   const [showBtn, setShowBtn] = useState(false);
-  const {user} = useContext(AuthContext);
-  const { id } = useParams();
-  const {data: author} = useAuthor(id ? id : user.id);
-  const {
-    data: authorPosts,
-    isLoading,
-    error,
-  } = useAuthorPosts(id ? id : user.id);
-  const { mutate: deletePost } = useDeletePost();
 
-  const handleImageChange = e => {
+  useEffect(() => {
+    if (currentUser) getUserById(currentUser.user_id);
+  }, [getUserById, currentUser]);
+
+  useEffect(() => {
+    if (user) getAuthorPosts(user.user_id);
+  }, [getAuthorPosts, user]);
+
+  const handleImageChange = (e) => {
     setImage(e.target.files[0]);
     setShowBtn(true);
   };
 
-  const saveProfileImage = async e => {
+  const saveProfileImage = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("image", image);
-    formData.append("user", JSON.stringify(user));
 
-    try {
-      await userService.updateUser(formData);
-    } catch (err) {
-      console.log("profile image upload: ", err);
-    }
+    formData.append("item", JSON.stringify(currentUser));
+
+    updateUser(currentUser.user_id, formData);
+
     setShowBtn(false);
   };
 
   return (
     <ErrorBoundary>
-      {author && (
+      {userLoading ? (
+        <div>Loading...</div>
+      ) : userError ? (
+        <div>{userError}</div>
+      ) : (
         <ProfileHeader>
-          <CoverPhotoContainer>
-            {author ? (
-              <CoverImage
-                src={author.profile_image}
-                alt={`{author.last_name} avatar`}
-              />
-            ) : (
+          {user && (
+            <CoverPhotoContainer>
               <CoverImage
                 src={user.profile_image}
-                alt={`user.last_name avatar`}
+                alt={`${user.last_name} avatar`}
               />
-            )}
-          </CoverPhotoContainer>
-          <Avatar>
-            <ProfileImage
-              src={author.profile_image || user.profile_image}
-              alt="Author avatar"
-            />
-            {user &&
-            <form>
-              <FileInput
-                className="inline-fileinput"
-                icon={<FaCamera />}
-                id="profile_image"
-                name="profile_image"
-                label="Profile Image"
-                onChange={handleImageChange}
+            </CoverPhotoContainer>
+          )}
+          {user && (
+            <Avatar>
+              <ProfileImage
+                src={user.profile_image}
+                alt={`${user.last_name} avatar`}
               />
-              {showBtn && (
-                <button onClick={saveProfileImage}>Save Image</button>
-              )}
-            </form>
-            }
-          </Avatar>
+              <form encType="multipart/form-data">
+                <FileInput
+                  className="inline-fileinput"
+                  icon={<FaCamera className="fa-camera" />}
+                  id="profile_image"
+                  name="profile_image"
+                  label="Profile Image"
+                  onChange={handleImageChange}
+                />
+                {showBtn && (
+                  <button onClick={saveProfileImage}>Save Image</button>
+                )}
+              </form>
+            </Avatar>
+          )}
         </ProfileHeader>
       )}
-      <div>profile info</div>
-      {isLoading ? (
+
+      {loading ? (
         <Spinner />
       ) : error ? (
-        <p>Something failed: {error}</p>
+        <div>{error.message}</div>
       ) : (
         <Layout>
+          <ProfileInfoContainer>
+            <h1>profile info</h1>
+          </ProfileInfoContainer>
           <TitleContainer>
-            <Title>Posts</Title>
+            <Title>Your Posts</Title>
           </TitleContainer>
           <Posts items={authorPosts} onDeletePost={deletePost} />
         </Layout>
@@ -157,7 +162,7 @@ const Avatar = styled.div`
   width: 160px;
   height: 160px;
   padding: 0;
-  border: 3.5px solid #f44336;
+  border: 3.5px solid var(--secondary-color);
 `;
 
 const ProfileImage = styled.img`
@@ -174,6 +179,9 @@ const TitleContainer = styled.div`
   margin: 2.5rem auto;
 `;
 
-const Title = styled.h1`
-  font-size: 2.5rem;
+const Title = styled.h1``;
+
+const ProfileInfoContainer = styled.div`
+  width: 100%;
+  margin: 2rem 0;
 `;

@@ -8,7 +8,8 @@ router.post("/signup", async (req, res, next) => {
   try {
     let user = await User.getUserByEmail(req.body.email);
 
-    if (user) return res.status(400).send("User already registered!");
+    if (user)
+      return res.status(400).send("User already registered, Please login!");
 
     const userInstance = new User(req.body);
 
@@ -30,6 +31,7 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.getUserByEmail(email);
 

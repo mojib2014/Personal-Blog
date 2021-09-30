@@ -1,32 +1,9 @@
-html {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-*,
-::after,
-*::before {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
 body {
-  background-color: #fff;
-  color: rgba(0, 0, 0, 0.87);
-  font-size: 18px;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  background-color: var(--main-bg-color);
+  color: var(--text-color);
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0.01071em;
-}
-
-p {
-  font-size: 1rem;
 }
 
 a {
@@ -89,4 +66,59 @@ textarea {
 
 .w-md-editor {
   margin-bottom: 1rem;
+}
+
+:root {
+  --nav-height: 56px;
+}
+
+button:disabled {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: normal;
+  opacity: 0.65;
+}
+
+button:disabled:hover {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: default;
+}
+
+.inline-fileinput {
+  border-radius: 50%;
+  position: absolute !important;
+  width: auto !important;
+  bottom: 54px;
+  right: -20px;
+}
+
+@media (min-width: 100px) {
+  .fa-camera {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.inline-fileinput input[type="file"] {
+  display: none;
+}
+
+.inline-fileinput label {
+  cursor: pointer !important;
+}
+
+.spinner {
+  animation: spin infinite 5s linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
